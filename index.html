@@ -33,9 +33,8 @@
       <input type="text" id="utm_campaign" value="campaign_2_julio"/>
     </label>
     <label>
-      Banner Image URL completa:  
-      <input type="text" id="banner_image_url"
-             value="https://www.nexustours.com/images/upload/B2C/Home/SliderBuscador/ES_eng.gif"/>
+      Banner image filename (p.ej. ES_eng.gif):  
+      <input type="text" id="banner_image_name" value="ES_eng.gif"/>
     </label>
     <button type="button" onclick="generate()">Generar y descargar HTML</button>
   </form>
@@ -47,11 +46,11 @@
 
       // 2) Lee valores del form
       const data = {
-        base_url:    document.getElementById('base_url').value.trim(),
-        utm_source:  document.getElementById('utm_source').value.trim(),
-        utm_medium:  document.getElementById('utm_medium').value.trim(),
-        utm_campaign:document.getElementById('utm_campaign').value.trim(),
-        banner_image_url: document.getElementById('banner_image_url').value.trim()
+        base_url:          document.getElementById('base_url').value.trim(),
+        utm_source:        document.getElementById('utm_source').value.trim(),
+        utm_medium:        document.getElementById('utm_medium').value.trim(),
+        utm_campaign:      document.getElementById('utm_campaign').value.trim(),
+        banner_image_name: document.getElementById('banner_image_name').value.trim()
       };
 
       // 3) Renderiza con Mustache
