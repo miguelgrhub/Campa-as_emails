@@ -761,33 +761,22 @@
                 </td></tr>
             </table>
 
-            <!-- Main Card -->
+            <!-- Main Card con contenido dinámico y botón estático -->
             <table id="TextBlock1" class="margin-bottom-22" role="presentation" border="0" cellspacing="0" width="100%">
-                <tr><td>
-                    <div class="card-email margin-bottom-22">
-                        <p class="parrafo-card">
-                            <span class="bold-text">Hello! <span class="orange-nexus">{{contact.firstname}}</span>,</span>
-                            <br><br>
-                            Planning your next escape? 📣 Get up to <span class="bold-text">15% OFF</span> tours and up to <span class="bold-text">40% OFF</span> transfers!
-                            <br>Caribbean experiences are almost sold out! 😱
-                            <br>🚨 Secure your SUMMER spots now before they disappear!
-                            <br>🏝️ <strong>
-                                <a href="{{base_url}}?utm_source={{utm_source}}&utm_medium={{utm_medium}}&utm_campaign={{utm_campaign}}&contact_id={{contact.id}}"
-                                   target="_blank">Book now</a>
-                            </strong>. Don’t just visit. Live it with NexusTours. 🧡
-                            <br><br>
-                            Your Local Expert, Just a Click Away.
-                        </p>
-                    </div>
-
-                    <a class="botonConfirmed"
-                       href="{{base_url}}?utm_source={{utm_source}}&utm_medium={{utm_medium}}&utm_campaign={{utm_campaign}}&contact_id={{contact.id}}"
-                       target="_blank">
-                        <div class="textBotonConfirmed">Click here</div>
-                    </a>
-                </td></tr>
+              <tr>
+                <td>
+                  <div class="card-email margin-bottom-22">
+                    {{{body_content}}}
+                  </div>
+            
+                  <a class="botonConfirmed"
+                     href="{{base_url}}?utm_source={{utm_source}}&utm_medium={{utm_medium}}&utm_campaign={{utm_campaign}}&contact_id={{contact.id}}"
+                     target="_blank">
+                    <div class="textBotonConfirmed">Click here</div>
+                  </a>
+                </td>
+              </tr>
             </table>
-
             <!-- Footer Socials -->
             <table class="background-redes-table" role="presentation" border="0" cellspacing="0" width="100%">
                 <tr><td>
