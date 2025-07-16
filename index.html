@@ -4,59 +4,72 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Generador de E-mail</title>
-  <!-- Mustache.js desde CDN -->
+
+  <!-- Mustache.js -->
   <script src="https://cdn.jsdelivr.net/npm/mustache@4.2.0/mustache.min.js"></script>
+  <!-- Quill (CSS + JS) -->
+  <link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
+
   <style>
     body { font-family: sans-serif; padding: 2rem; }
     label { display: block; margin-bottom: .5rem; }
     input { width: 100%; padding: .5rem; margin-bottom: 1rem; }
+    #editor { height: 200px; margin-bottom: 1rem; background: #fff; }
     button { padding: .75rem 1.5rem; background:#FF621D; color:#fff; border:none; cursor:pointer; }
   </style>
 </head>
 <body>
   <h1>Configura tu plantilla</h1>
-  <form id="config-form">
-    <label>
-      Base URL (hasta el `?`):  
+  <form id="config-form" onsubmit="return false;">
+    <label>Base URL (hasta `?`):
       <input type="text" id="base_url" value="https://www.nexustours.com/discounts"/>
     </label>
-    <label>
-      UTM Source:  
+    <label>UTM Source:
       <input type="text" id="utm_source" value="nexusB2C"/>
     </label>
-    <label>
-      UTM Medium:  
+    <label>UTM Medium:
       <input type="text" id="utm_medium" value="mail"/>
     </label>
-    <label>
-      UTM Campaign:  
+    <label>UTM Campaign:
       <input type="text" id="utm_campaign" value="campaign_2_julio"/>
     </label>
-    <label>
-      Banner image filename (p.ej. ES_eng.gif):  
+    <label>Banner image filename:
       <input type="text" id="banner_image_name" value="ES_eng.gif"/>
     </label>
+
+    <label>Contenido de la tabla (texto, emojis, links…):
+      <div id="editor"></div>
+    </label>
+
     <button type="button" onclick="generate()">Generar y descargar HTML</button>
   </form>
 
   <script>
-    async function generate() {
-      // 1) Descarga el template
-      const tpl = await fetch('template.html').then(r => r.text());
+    // Inicializa Quill
+    const quill = new Quill('#editor', {
+      theme: 'snow',
+      modules: {
+        toolbar: [
+          ['bold','italic','underline'],
+          [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+          ['link','emoji']
+        ]
+      }
+    });
 
-      // 2) Lee valores del form
+    async function generate() {
+      const tpl = await fetch('template.html').then(r => r.text());
       const data = {
         base_url:          document.getElementById('base_url').value.trim(),
         utm_source:        document.getElementById('utm_source').value.trim(),
         utm_medium:        document.getElementById('utm_medium').value.trim(),
         utm_campaign:      document.getElementById('utm_campaign').value.trim(),
-        banner_image_name: document.getElementById('banner_image_name').value.trim()
+        banner_image_name: document.getElementById('banner_image_name').value.trim(),
+        // Aquí metemos el HTML formateado
+        body_content:      quill.root.innerHTML
       };
-
-      // 3) Renderiza con Mustache
       const rendered = Mustache.render(tpl, data);
-
-      // 4) Forzar descarga del HTML resultante
       const blob = new Blob([rendered], { type: 'text/html' });
       const url  = URL.createObjectURL(blob);
       const a    = document.createElement('a');
