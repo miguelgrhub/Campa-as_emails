@@ -16,34 +16,45 @@
     label { display: block; margin-bottom: .5rem; }
     input { width: 100%; padding: .5rem; margin-bottom: 1rem; }
     #editor { height: 200px; margin-bottom: 1rem; background: #fff; }
-    button { padding: .75rem 1.5rem; background:#FF621D; color:#fff; border:none; cursor:pointer; }
+    button { padding: .75rem 1.5rem; background:#FF621D; color:#fff; border:none; cursor:pointer; margin-right: .5rem; }
+    iframe { width: 100%; height: 600px; border: 1px solid #ccc; margin-top: 1rem; }
   </style>
 </head>
 <body>
   <h1>Configura tu plantilla</h1>
   <form id="config-form" onsubmit="return false;">
-    <label>Base URL (hasta `?`):
+    <label>
+      Base URL (hasta `?`):  
       <input type="text" id="base_url" value="https://www.nexustours.com/discounts"/>
     </label>
-    <label>UTM Source:
+    <label>
+      UTM Source:  
       <input type="text" id="utm_source" value="nexusB2C"/>
     </label>
-    <label>UTM Medium:
+    <label>
+      UTM Medium:  
       <input type="text" id="utm_medium" value="mail"/>
     </label>
-    <label>UTM Campaign:
+    <label>
+      UTM Campaign:  
       <input type="text" id="utm_campaign" value="campaign_2_julio"/>
     </label>
-    <label>Banner image filename:
+    <label>
+      Banner image filename (p.ej. ES_eng.gif):  
       <input type="text" id="banner_image_name" value="ES_eng.gif"/>
     </label>
 
-    <label>Contenido de la tabla (texto, emojis, links…):
+    <label>
+      Contenido de la tarjeta (puedes usar negritas, saltos de línea, emojis, enlaces…):
       <div id="editor"></div>
     </label>
 
-    <button type="button" onclick="generate()">Generar y descargar HTML</button>
+    <button type="button" id="preview-btn" onclick="generatePreview()">Generar Previsualización</button>
+    <button type="button" id="download-btn" onclick="downloadHTML()" disabled>Descargar HTML</button>
   </form>
+
+  <h2>Previsualización</h2>
+  <iframe id="preview"></iframe>
 
   <script>
     // Inicializa Quill
@@ -53,12 +64,14 @@
         toolbar: [
           ['bold','italic','underline'],
           [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-          ['link','emoji']
+          ['link']
         ]
       }
     });
 
-    async function generate() {
+    let lastRendered = '';
+
+    async function generatePreview() {
       const tpl = await fetch('template.html').then(r => r.text());
       const data = {
         base_url:          document.getElementById('base_url').value.trim(),
@@ -66,11 +79,16 @@
         utm_medium:        document.getElementById('utm_medium').value.trim(),
         utm_campaign:      document.getElementById('utm_campaign').value.trim(),
         banner_image_name: document.getElementById('banner_image_name').value.trim(),
-        // Aquí metemos el HTML formateado
         body_content:      quill.root.innerHTML
       };
       const rendered = Mustache.render(tpl, data);
-      const blob = new Blob([rendered], { type: 'text/html' });
+      lastRendered = rendered;
+      document.getElementById('preview').srcdoc = rendered;
+      document.getElementById('download-btn').disabled = false;
+    }
+
+    function downloadHTML() {
+      const blob = new Blob([lastRendered], { type: 'text/html' });
       const url  = URL.createObjectURL(blob);
       const a    = document.createElement('a');
       a.href     = url;
