@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Generador de E-mail</title>
+  <!-- Mustache.js desde CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/mustache@4.2.0/mustache.min.js"></script>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; }
+    label { display: block; margin-bottom: .5rem; }
+    input { width: 100%; padding: .5rem; margin-bottom: 1rem; }
+    button { padding: .75rem 1.5rem; background:#FF621D; color:#fff; border:none; cursor:pointer; }
+  </style>
+</head>
+<body>
+  <h1>Configura tu plantilla</h1>
+  <form id="config-form">
+    <label>
+      Base URL (hasta el `?`):  
+      <input type="text" id="base_url" value="https://www.nexustours.com/discounts"/>
+    </label>
+    <label>
+      UTM Source:  
+      <input type="text" id="utm_source" value="nexusB2C"/>
+    </label>
+    <label>
+      UTM Medium:  
+      <input type="text" id="utm_medium" value="mail"/>
+    </label>
+    <label>
+      UTM Campaign:  
+      <input type="text" id="utm_campaign" value="campaign_2_julio"/>
+    </label>
+    <label>
+      Banner Image URL completa:  
+      <input type="text" id="banner_image_url"
+             value="https://www.nexustours.com/images/upload/B2C/Home/SliderBuscador/ES_eng.gif"/>
+    </label>
+    <button type="button" onclick="generate()">Generar y descargar HTML</button>
+  </form>
+
+  <script>
+    async function generate() {
+      // 1) Descarga el template
+      const tpl = await fetch('template.html').then(r => r.text());
+
+      // 2) Lee valores del form
+      const data = {
+        base_url:    document.getElementById('base_url').value.trim(),
+        utm_source:  document.getElementById('utm_source').value.trim(),
+        utm_medium:  document.getElementById('utm_medium').value.trim(),
+        utm_campaign:document.getElementById('utm_campaign').value.trim(),
+        banner_image_url: document.getElementById('banner_image_url').value.trim()
+      };
+
+      // 3) Renderiza con Mustache
+      const rendered = Mustache.render(tpl, data);
+
+      // 4) Forzar descarga del HTML resultante
+      const blob = new Blob([rendered], { type: 'text/html' });
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href     = url;
+      a.download = 'email-custom.html';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  </script>
+</body>
+</html>
