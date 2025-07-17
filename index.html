@@ -79,8 +79,35 @@
         utm_medium:        document.getElementById('utm_medium').value.trim(),
         utm_campaign:      document.getElementById('utm_campaign').value.trim(),
         banner_image_name: document.getElementById('banner_image_name').value.trim(),
-        body_content:      quill.root.innerHTML
+        body_content:      ''
       };
+
+      // 1) Obtén HTML del editor
+      const rawHtml = quill.root.innerHTML;
+      // 2) Monta en un contenedor para procesar enlaces
+      const container = document.createElement('div');
+      container.innerHTML = rawHtml;
+      // 3) Procesa cada <a>
+      container.querySelectorAll('a').forEach(a => {
+        let href = a.getAttribute('href') || a.textContent.trim();
+        // Añade protocolo si falta
+        if (!/^https?:\/\//i.test(href)) {
+          href = 'https://' + href;
+        }
+        // Pasa a minúsculas
+        href = href.toLowerCase();
+        // Añade UTM y contact_id
+        const sep = href.includes('?') ? '&' : '?';
+        href = href + sep +
+          'utm_source='   + encodeURIComponent(data.utm_source) +
+          '&utm_medium='  + encodeURIComponent(data.utm_medium) +
+          '&utm_campaign='+ encodeURIComponent(data.utm_campaign) +
+          '&contact_id={{contact.id}}';
+        a.setAttribute('href', href);
+      });
+      data.body_content = container.innerHTML;
+
+      // Renderiza y previsualiza
       const rendered = Mustache.render(tpl, data);
       lastRendered = rendered;
       document.getElementById('preview').srcdoc = rendered;
