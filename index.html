@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Generador de E-mail Multimarcas</title>
 
   <!-- Mustache.js -->
   <script src="https://cdn.jsdelivr.net/npm/mustache@4.2.0/mustache.min.js"></script>
   <!-- Quill (CSS + JS) -->
-  <link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
 
   <style>
@@ -16,42 +16,40 @@
     h1 { margin-bottom: 1rem; }
     form { background: #fff; padding: 1rem; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
     label { display: block; margin-bottom: .75rem; font-weight: 500; }
-    input, select, #editor { width: 100%; padding: .5rem; margin-bottom: 1rem; border: 1px solid #ccc; border-radius: 4px; }
-    button { padding: .75rem 1.5rem; background: #FF621D; color: #fff; border: none; border-radius: 4px; cursor: pointer; margin-right: .5rem; }
+    select[multiple] { height: 10rem; }
+    input, select, #editor, .sources-list {
+      width: 100%; padding: .5rem; margin-bottom: 1rem;
+      border: 1px solid #ccc; border-radius: 4px;
+    }
+    button {
+      padding: .75rem 1.5rem; background: #FF621D;
+      color: #fff; border: none; border-radius: 4px;
+      cursor: pointer; margin-right: .5rem;
+    }
     button:disabled { background: #ccc; cursor: not-allowed; }
     #editor { height: 180px; background: #fff; }
-    .previews { 
-      display: grid; 
-      grid-template-columns: repeat(auto-fill, minmax(45%, 1fr)); 
-      gap: 2rem; 
-      margin-top: 2rem; 
+    .previews {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(45%, 1fr));
+      gap: 2rem; margin-top: 2rem;
     }
-    .preview-card { 
-      background: #fff; 
-      border-radius: 8px; 
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1); 
-      overflow: hidden; 
-      display: flex; 
-      flex-direction: column; 
+    .preview-card {
+      background: #fff; border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      overflow: hidden; display: flex; flex-direction: column;
     }
-    .preview-header { 
-      background: #FF621D; 
-      color: #fff; 
-      padding: .5rem 1rem; 
-      font-weight: 600; 
+    .preview-header {
+      background: #FF621D; color: #fff;
+      padding: .5rem 1rem; font-weight: 600;
     }
-    .preview-frame { 
-      border: none; 
-      width: 100%; 
-      /* La altura se ajustará automáticamente vía JS */ 
-    }
+    .preview-frame { border: none; width: 100%; }
   </style>
 </head>
 <body>
   <h1>Configura múltiples plantillas</h1>
   <form id="config-form" onsubmit="return false;">
-    <label>Seleccionar plantilla / Marca:
-      <select id="template_selector">
+    <label>Seleccionar plantillas (Ctrl+click múltiple):
+      <select id="template_selector" multiple>
         <option value="mystique_campaña_eng.html">Mystique</option>
         <option value="Planet_campaña_eng.html">Planet</option>
         <option value="Royalton_campaña_eng.html">Royalton</option>
@@ -61,12 +59,22 @@
         <option value="hype_campaña_eng.html">Hype</option>
         <option value="Prime_campaña_eng.html">Prime</option>
         <option value="princess_campaña_eng.html">Princess</option>
-        <option value="all">Todas</option>
       </select>
     </label>
 
-    <label>Banner image filename (ej. ES_eng.gif):
-      <input type="text" id="banner_image_name" value="ES_eng.gif"/>
+    <label>UTM Source (por marca):</label>
+    <div class="sources-list" id="sources_list"></div>
+
+    <label>UTM Medium (solo lectura):
+      <input type="text" id="utm_medium" disabled />
+    </label>
+
+    <label>UTM Campaign (editable):
+      <input type="text" id="utm_campaign" placeholder="campaign" />
+    </label>
+
+    <label>Banner image filename (p.ej. ES_eng.gif):
+      <input type="text" id="banner_image_name" value="ES_eng.gif" />
     </label>
 
     <label>Contenido dinámico (negritas, saltos, emojis, enlaces…):
@@ -81,39 +89,63 @@
   <div class="previews" id="previews"></div>
 
   <script>
-    // Inicializa Quill
     const quill = new Quill('#editor', {
       theme: 'snow',
-      modules: { toolbar: [['bold','italic','underline'], ['link'], [{ 'list':'ordered'},{ 'list':'bullet'}]] }
+      modules: { toolbar: [['bold','italic','underline'], ['link'], [{ list:'ordered'},{ list:'bullet'}]] }
     });
 
-    // Config propia de cada plantilla
     const templateConfig = {
-      "mystique_campaña_eng.html": { base_url:"https://mystique.nexustours.com/services", utm_source:"mystique", utm_medium:"mail", utm_campaign:"campaign_2_julio" },
-      "Planet_campaña_eng.html":   { base_url:"https://planet.nexustours.com", utm_source:"PH", utm_medium:"mail", utm_campaign:"campaign_2_julio" },
-      "Royalton_campaña_eng.html": { base_url:"https://royalton.nexustours.com/services", utm_source:"royalton", utm_medium:"mail", utm_campaign:"campaign_2_julio" },
-      "Nexus_campaña_eng.html":    { base_url:"https://www.nexustours.com/discounts", utm_source:"nexusB2C", utm_medium:"mail", utm_campaign:"campaign_2_julio" },
-      "VistaSol_campaña_eng.html": { base_url:"https://vistasol.nexustours.com", utm_source:"vistasol", utm_medium:"mail", utm_campaign:"campaign_2_julio" },
-      "latam_campaña_eng.html":    { base_url:"https://latamtravel.nexustours.com", utm_source:"latam", utm_medium:"mail", utm_campaign:"campaign_2_julio" },
-      "hype_campaña_eng.html":     { base_url:"https://www.cancuntransfersandtours.com", utm_source:"HypeTravel", utm_medium:"mail", utm_campaign:"campaign_2_julio" },
-      "Prime_campaña_eng.html":    { base_url:"https://primetravelersclub.nexustours.com", utm_source:"prime", utm_medium:"mail", utm_campaign:"campaign_2_julio" },
-      "princess_campaña_eng.html": { base_url:"https://princess.nexustours.com", utm_source:"princess", utm_medium:"mail", utm_campaign:"campaign_2_julio" }
+      "mystique_campaña_eng.html": { base_url:"https://mystique.nexustours.com/services", utm_source:"mystique", utm_medium:"mail" },
+      "Planet_campaña_eng.html":   { base_url:"https://planet.nexustours.com", utm_source:"PH", utm_medium:"mail" },
+      "Royalton_campaña_eng.html": { base_url:"https://royalton.nexustours.com/services", utm_source:"royalton", utm_medium:"mail" },
+      "Nexus_campaña_eng.html":    { base_url:"https://www.nexustours.com/discounts", utm_source:"nexusB2C", utm_medium:"mail" },
+      "VistaSol_campaña_eng.html": { base_url:"https://vistasol.nexustours.com", utm_source:"vistasol", utm_medium:"mail" },
+      "latam_campaña_eng.html":    { base_url:"https://latamtravel.nexustours.com", utm_source:"latam", utm_medium:"mail" },
+      "hype_campaña_eng.html":     { base_url:"https://www.cancuntransfersandtours.com", utm_source:"HypeTravel", utm_medium:"mail" },
+      "Prime_campaña_eng.html":    { base_url:"https://primetravelersclub.nexustours.com", utm_source:"prime", utm_medium:"mail" },
+      "princess_campaña_eng.html": { base_url:"https://princess.nexustours.com", utm_source:"princess", utm_medium:"mail" }
     };
+    const selSelect = document.getElementById('template_selector');
+    const sourcesList = document.getElementById('sources_list');
+    const utmMediumInput = document.getElementById('utm_medium');
+    const utmCampaignInput = document.getElementById('utm_campaign');
     let lastRenderedMap = {};
 
-    // Previsualiza una o todas las plantillas
+    function onTemplateChange() {
+      const selected = Array.from(selSelect.selectedOptions).map(o => o.value);
+      sourcesList.innerHTML = '';
+      if (!selected.length) {
+        utmMediumInput.value = '';
+        return;
+      }
+      const firstCfg = templateConfig[selected[0]];
+      utmMediumInput.value = firstCfg.utm_medium;
+      selected.forEach(file => {
+        const div = document.createElement('div');
+        div.textContent = `${file.replace('_campaña_eng.html','')}: ${templateConfig[file].utm_source}`;
+        sourcesList.appendChild(div);
+      });
+    }
+    selSelect.addEventListener('change', onTemplateChange);
+    onTemplateChange();
+
     async function generatePreview() {
-      const sel = document.getElementById('template_selector').value;
-      const toProcess = sel === 'all' ? Object.keys(templateConfig) : [sel];
-      const previews = document.getElementById('previews');
-      previews.innerHTML = '';
+      const selected = Array.from(selSelect.selectedOptions).map(o => o.value);
+      if (!selected.length) return alert('Selecciona al menos una plantilla.');
+      const previews = document.getElementById('previews'); previews.innerHTML = '';
       const rawHtml = quill.root.innerHTML;
+      const campaign = utmCampaignInput.value.trim();
 
-      for (const tplFile of toProcess) {
+      for (const tplFile of selected) {
         const cfg = templateConfig[tplFile];
-        const data = { ...cfg, banner_image_name: document.getElementById('banner_image_name').value.trim() };
+        const data = {
+          base_url: cfg.base_url,
+          utm_source: cfg.utm_source,
+          utm_medium: cfg.utm_medium,
+          utm_campaign: campaign,
+          banner_image_name: document.getElementById('banner_image_name').value.trim()
+        };
 
-        // Procesa enlaces dentro del editor
         const c = document.createElement('div'); c.innerHTML = rawHtml;
         c.querySelectorAll('a').forEach(a => {
           let href = a.getAttribute('href') || a.textContent.trim();
@@ -129,54 +161,30 @@
         });
         data.body_content = c.innerHTML;
 
-        // Render Mustache
         const tplText = await fetch(tplFile).then(r => r.text());
         const rendered = Mustache.render(tplText, data);
         lastRenderedMap[tplFile] = rendered;
 
-        // Añade tarjeta de preview
-        const card = document.createElement('div');
-        card.className = 'preview-card';
-        const header = document.createElement('div');
-        header.className = 'preview-header';
-        header.textContent = tplFile.replace('_campaña_eng.html', '');
-        const frame = document.createElement('iframe');
-        frame.className = 'preview-frame';
+        const card = document.createElement('div'); card.className = 'preview-card';
+        const header = document.createElement('div'); header.className = 'preview-header';
+        header.textContent = tplFile.replace('_campaña_eng.html','');
+        const frame = document.createElement('iframe'); frame.className = 'preview-frame';
         frame.srcdoc = rendered;
-        // Ajusta alto al contenido
-        frame.onload = () => {
-          const h = frame.contentDocument.body.scrollHeight;
-          frame.style.height = h + 'px';
-        };
-        card.appendChild(header);
-        card.appendChild(frame);
+        frame.onload = () => frame.style.height = frame.contentDocument.body.scrollHeight + 'px';
+        card.append(header, frame);
         previews.appendChild(card);
       }
       document.getElementById('download-btn').disabled = false;
     }
 
-    // Descarga uno o todos
     function downloadHTML() {
-      const sel = document.getElementById('template_selector').value;
-      if (sel === 'all') {
-        for (const [file, html] of Object.entries(lastRenderedMap)) {
-          const blob = new Blob([html], { type: 'text/html' });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = file.replace('.html','-custom.html');
-          a.click();
-          URL.revokeObjectURL(url);
-        }
-      } else {
-        const html = lastRenderedMap[sel];
+      const selected = Array.from(selSelect.selectedOptions).map(o => o.value);
+      for (const tplFile of selected) {
+        const html = lastRenderedMap[tplFile];
         const blob = new Blob([html], { type: 'text/html' });
         const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = sel.replace('.html','-custom.html');
-        a.click();
-        URL.revokeObjectURL(url);
+        const a = document.createElement('a'); a.href = url;
+        a.download = tplFile.replace('.html','-custom.html'); a.click(); URL.revokeObjectURL(url);
       }
     }
   </script>
