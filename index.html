@@ -41,10 +41,9 @@
       font-weight: 600; 
     }
     .preview-frame { 
-      flex: 1; 
       border: none; 
       width: 100%; 
-      height: 400px; 
+      /* La altura se ajustará automáticamente vía JS */ 
     }
   </style>
 </head>
@@ -144,6 +143,11 @@
         const frame = document.createElement('iframe');
         frame.className = 'preview-frame';
         frame.srcdoc = rendered;
+        // Ajusta alto al contenido
+        frame.onload = () => {
+          const h = frame.contentDocument.body.scrollHeight;
+          frame.style.height = h + 'px';
+        };
         card.appendChild(header);
         card.appendChild(frame);
         previews.appendChild(card);
