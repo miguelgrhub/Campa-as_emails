@@ -1,49 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Generador de E-mail Multimarcas</title>
 
   <!-- Mustache.js -->
   <script src="https://cdn.jsdelivr.net/npm/mustache@4.2.0/mustache.min.js"></script>
   <!-- Quill -->
-  <link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
-  <!-- Choices.js for nice multiselect -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css"/>
+  <!-- Choices.js for multiselect -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 
   <style>
-    body { font-family: 'DM Sans', sans-serif; background: #eef2f7; margin:0; padding:2rem }
-    .container { max-width:1100px; margin:auto }
-    h1 { text-align:center; color:#333; margin-bottom:1.5rem }
-    form { background:#fff; padding:1.5rem; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.1) }
-    label { font-weight:500; color:#555; margin-bottom:.5rem; display:block }
-    select, input, #editor, .sources-list {
-      width:100%; padding:.75rem; border:1px solid #ccc; border-radius:6px; box-sizing:border-box; margin-bottom:1rem
-    }
-    .sources-list { background:#fafafa; max-height:6rem; overflow-y:auto }
-    #editor { height:180px; background:#fff }
-    button {
-      background:#FF621D; color:#fff; border:none; padding:.75rem 1.5rem;
-      border-radius:6px; cursor:pointer; font-weight:600; margin-right:.5rem;
-      transition:background .2s
-    }
-    button:hover { background:#e55d1c }
-    button:disabled { background:#ccc; cursor:not-allowed }
-    .previews {
-      display:grid; grid-template-columns:repeat(auto-fill,minmax(45%,1fr));
-      gap:2rem; margin-top:2rem
-    }
-    .preview-card {
-      background:#fff; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.1);
-      overflow:hidden; display:flex; flex-direction:column
-    }
-    .preview-header {
-      background:#FF621D; color:#fff; padding:.75rem 1rem; font-weight:600
-    }
-    .preview-frame { border:none; width:100% }
+    body { font-family: 'DM Sans', sans-serif; background: #eef2f7; margin:0; padding:2rem; }
+    .container { max-width:1100px; margin:auto; }
+    h1 { text-align:center; color:#333; margin-bottom:1.5rem; }
+    form { background:#fff; padding:1.5rem; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.1); }
+    label { display:block; font-weight:500; color:#555; margin-bottom:0.5rem; }
+    select, input, #editor, .sources-list { width:100%; padding:0.75rem; border:1px solid #ccc; border-radius:6px; box-sizing:border-box; margin-bottom:1rem; }
+    .sources-list { background:#fafafa; max-height:6rem; overflow-y:auto; }
+    #editor { height:180px; background:#fff; }
+    button { background:#FF621D; color:#fff; border:none; padding:0.75rem 1.5rem; border-radius:6px; cursor:pointer; font-weight:600; margin-right:0.5rem; transition:background .2s; }
+    button:hover { background:#e55d1c; }
+    button:disabled { background:#ccc; cursor:not-allowed; }
+    .previews { display:grid; grid-template-columns:repeat(auto-fill,minmax(45%,1fr)); gap:2rem; margin-top:2rem; }
+    .preview-card { background:#fff; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.1); overflow:hidden; display:flex; flex-direction:column; }
+    .preview-header { background:#FF621D; color:#fff; padding:0.75rem 1rem; font-weight:600; }
+    .preview-frame { border:none; width:100%; }
   </style>
 </head>
 <body>
@@ -67,13 +53,23 @@
       <div class="sources-list" id="sources_list"></div>
 
       <label>UTM Medium (solo lectura):</label>
-      <input type="text" id="utm_medium" disabled/>
+      <input type="text" id="utm_medium" disabled />
 
       <label>UTM Campaign (editable):</label>
-      <input type="text" id="utm_campaign" placeholder="campaign_2_julio"/>
+      <input type="text" id="utm_campaign" placeholder="campaign_2_julio" />
 
-      <label>Banner image filename (p.ej. ES_eng.gif):</label>
-      <input type="text" id="banner_image_name" value="ES_eng.gif"/>
+      <label>Banner imagen (ej. ES_eng.gif):</label>
+      <input type="text" id="banner_image_name" value="ES_eng.gif" />
+
+      <label>Insertar enlace predefinido:</label>
+      <select id="link_selector">
+        <option value="">--Selecciona--</option>
+        <option value="home">Home</option>
+        <option value="discounts">Discounts</option>
+        <option value="transfers">Transfers</option>
+        <option value="services">Services</option>
+      </select>
+      <button type="button" id="insert_link_btn">Insertar enlace</button>
 
       <label>Contenido dinámico (negritas, saltos, emojis, enlaces…):</label>
       <div id="editor"></div>
@@ -86,10 +82,13 @@
   </div>
 
   <script>
-    // init Quill
-    const quill = new Quill('#editor',{ theme:'snow', modules:{ toolbar:[['bold','italic','underline'],['link'],[{list:'ordered'},{list:'bullet'}]] } });
+    // Inicializa Quill
+    const quill = new Quill('#editor', {
+      theme: 'snow',
+      modules: { toolbar: [['bold','italic','underline'], ['link'], [{ list:'ordered'},{ list:'bullet'}]] }
+    });
 
-    // init Choices.js
+    // Inicializa Choices.js para multiselect bonito
     const choices = new Choices('#template_selector', {
       removeItemButton: true,
       placeholderValue: 'Seleccionar plantillas...',
@@ -98,49 +97,66 @@
     });
 
     const templateConfig = {
-      "mystique_campaña_eng.html": { base_url:"https://mystique.nexustours.com/services", utm_source:"mystique", utm_medium:"mail" },
-      "Planet_campaña_eng.html":   { base_url:"https://planet.nexustours.com",    utm_source:"PH",      utm_medium:"mail" },
-      "Royalton_campaña_eng.html": { base_url:"https://royalton.nexustours.com/services", utm_source:"royalton", utm_medium:"mail" },
-      "Nexus_campaña_eng.html":    { base_url:"https://www.nexustours.com/discounts", utm_source:"nexusB2C", utm_medium:"mail" },
-      "VistaSol_campaña_eng.html": { base_url:"https://vistasol.nexustours.com", utm_source:"vistasol", utm_medium:"mail" },
-      "latam_campaña_eng.html":    { base_url:"https://latamtravel.nexustours.com", utm_source:"latam",    utm_medium:"mail" },
-      "hype_campaña_eng.html":     { base_url:"https://www.cancuntransfersandtours.com", utm_source:"HypeTravel", utm_medium:"mail" },
-      "Prime_campaña_eng.html":    { base_url:"https://primetravelersclub.nexustours.com", utm_source:"prime", utm_medium:"mail" },
-      "princess_campaña_eng.html": { base_url:"https://princess.nexustours.com", utm_source:"princess", utm_medium:"mail" }
+      "mystique_campaña_eng.html": { base_url: "https://mystique.nexustours.com", utm_source: "mystique", utm_medium: "mail" },
+      "Planet_campaña_eng.html":   { base_url: "https://planet.nexustours.com", utm_source: "PH", utm_medium: "mail" },
+      "Royalton_campaña_eng.html": { base_url: "https://royalton.nexustours.com", utm_source: "royalton", utm_medium: "mail" },
+      "Nexus_campaña_eng.html":    { base_url: "https://www.nexustours.com/discounts", utm_source: "nexusB2C", utm_medium: "mail" },
+      "VistaSol_campaña_eng.html": { base_url: "https://vistasol.nexustours.com", utm_source: "vistasol", utm_medium: "mail" },
+      "latam_campaña_eng.html":    { base_url: "https://latamtravel.nexustours.com", utm_source: "latam", utm_medium: "mail" },
+      "hype_campaña_eng.html":     { base_url: "https://www.cancuntransfersandtours.com", utm_source: "HypeTravel", utm_medium: "mail" },
+      "Prime_campaña_eng.html":    { base_url: "https://primetravelersclub.nexustours.com", utm_source: "prime", utm_medium: "mail" },
+      "princess_campaña_eng.html": { base_url: "https://princess.nexustours.com", utm_source: "princess", utm_medium: "mail" }
     };
 
     const utmMed = document.getElementById('utm_medium');
     const utmCamp = document.getElementById('utm_campaign');
     const sourcesList = document.getElementById('sources_list');
+    const linkSelector = document.getElementById('link_selector');
+    const insertLinkBtn = document.getElementById('insert_link_btn');
     let lastRenderedMap = {};
 
-    // update UTM fields when selection changes
+    // Actualiza campos UTM y lista de sources al cambiar selección
     document.querySelector('#template_selector').addEventListener('change', () => {
       const vals = choices.getValue(true);
-      // medium from first
-      if(vals.length){
-        utmMed.value = templateConfig[vals[0]].utm_medium;
+      if (vals.length) {
+        const cfg = templateConfig[ vals[0] ];
+        utmMed.value = cfg.utm_medium;
       } else {
         utmMed.value = '';
       }
-      // list sources
       sourcesList.innerHTML = '';
-      vals.forEach(key => {
-        const d = document.createElement('div');
-        d.textContent = `${key.replace('_campaña_eng.html','')}: ${templateConfig[key].utm_source}`;
-        sourcesList.appendChild(d);
+      vals.forEach(v => {
+        const cfg = templateConfig[v];
+        const div = document.createElement('div');
+        div.textContent = `${ v.replace('_campaña_eng.html','') }: ${ cfg.utm_source }`;
+        sourcesList.appendChild(div);
       });
     });
 
-    async function generatePreview(){
+    // Insertar enlace predefinido en editor
+    insertLinkBtn.addEventListener('click', () => {
+      const key = linkSelector.value;
+      if (!key) return;
+      const label = key.charAt(0).toUpperCase() + key.slice(1);
+      const range = quill.getSelection(true);
+      quill.insertText(range.index, label, 'link', `{{${key}}}`);
+      quill.setSelection(range.index + label.length);
+    });
+
+    // Generar previsualizaciones
+    async function generatePreview() {
       const vals = choices.getValue(true);
-      if(!vals.length) return alert('Selecciona al menos una plantilla.');
+      if (!vals.length) {
+        alert('Selecciona al menos una plantilla.');
+        return;
+      }
       const previews = document.getElementById('previews');
       previews.innerHTML = '';
       const raw = quill.root.innerHTML;
       const campaign = utmCamp.value.trim();
+      const suffix = { home:'/?', discounts:'/discounts/?', transfers:'/transfers/?', services:'/services/?' };
 
-      for(const f of vals){
+      for (const f of vals) {
         const cfg = templateConfig[f];
         const data = {
           base_url: cfg.base_url,
@@ -149,41 +165,63 @@
           utm_campaign: campaign,
           banner_image_name: document.getElementById('banner_image_name').value.trim()
         };
-        // fix links
-        const c = document.createElement('div'); c.innerHTML = raw;
-        c.querySelectorAll('a').forEach(a=>{
-          let href = a.href||a.textContent.trim();
-          if(!/^https?:\/\//i.test(href)) href='https://'+href;
-          const sep = href.includes('?')?'&':'?';
-          a.href = href + sep +
+        // Variables de enlace
+        Object.entries(suffix).forEach(([k,suf])=>{
+          let url = cfg.base_url + suf;
+          const sep = url.includes('?')?'&':'?';
+          url += sep+
             'utm_source='+encodeURIComponent(data.utm_source)+
             '&utm_medium='+encodeURIComponent(data.utm_medium)+
             '&utm_campaign='+encodeURIComponent(data.utm_campaign)+
             '&contact_id={{contact.id}}';
+          data[k] = url;
+        });
+        // Procesar links en el contenido
+        const c = document.createElement('div'); c.innerHTML = raw;
+        c.querySelectorAll('a').forEach(a=>{
+          let href = a.getAttribute('href') || a.textContent.trim();
+          if (!/^{{\w+}}$/.test(href)) {
+            if (!/^https?:\/\//i.test(href)) href = 'https://' + href;
+            const sep = href.includes('?')?'&':'?';
+            href += sep+
+              'utm_source='+encodeURIComponent(data.utm_source)+
+              '&utm_medium='+encodeURIComponent(data.utm_medium)+
+              '&utm_campaign='+encodeURIComponent(data.utm_campaign)+
+              '&contact_id={{contact.id}}';
+          }
+          a.setAttribute('href', href);
         });
         data.body_content = c.innerHTML;
-
+        // Render Mustache
         const tpl = await fetch(f).then(r=>r.text());
-        const html = Mustache.render(tpl,data);
+        const html = Mustache.render(tpl, data);
         lastRenderedMap[f] = html;
-
+        // Añadir tarjeta preview
         const card = document.createElement('div'); card.className='preview-card';
-        const hdr = document.createElement('div'); hdr.className='preview-header'; hdr.textContent=f.replace('_campaña_eng.html','');
-        const frm = document.createElement('iframe'); frm.className='preview-frame'; frm.srcdoc=html;
-        frm.onload = ()=>frm.style.height=frm.contentDocument.body.scrollHeight+'px';
-        card.append(hdr,frm); previews.append(card);
+        const hdr = document.createElement('div'); hdr.className='preview-header';
+        hdr.textContent = f.replace('_campaña_eng.html','');
+        const frm = document.createElement('iframe'); frm.className='preview-frame';
+        frm.srcdoc = html;
+        frm.onload = ()=>frm.style.height = frm.contentDocument.body.scrollHeight + 'px';
+        card.append(hdr, frm);
+        previews.append(card);
       }
-      document.getElementById('download-btn').disabled=false;
+
+      document.getElementById('download-btn').disabled = false;
     }
 
-    function downloadHTML(){
+    // Descargar HTMLs generados
+    function downloadHTML() {
       const vals = choices.getValue(true);
-      for(const f of vals){
-        const blob=new Blob([lastRenderedMap[f]],{type:'text/html'});
-        const url=URL.createObjectURL(blob);
-        const a=document.createElement('a'); a.href=url; a.download=f.replace('.html','-custom.html'); a.click();
+      vals.forEach(f=>{
+        const blob = new Blob([lastRenderedMap[f]], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = f.replace('.html','-custom.html');
+        a.click();
         URL.revokeObjectURL(url);
-      }
+      });
     }
   </script>
 </body>
