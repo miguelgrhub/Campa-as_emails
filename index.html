@@ -12,35 +12,94 @@
   <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
 
   <style>
-    body { font-family: 'DM Sans', sans-serif; background: #eef2f7; margin: 0; padding: 2rem; }
-    .container { max-width: 1200px; margin: auto; }
-    h1 { text-align: center; color: #333; margin-bottom: 1.5rem; }
-    form { background: #fff; padding: 1.5rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-    label { display: block; margin-bottom: 1rem; font-weight: 500; color: #555; }
-    .checkbox-list label { display: block; margin-bottom: .5rem; }
-    .checkbox-list input { margin-right: .5rem; }
-    input, #editor, .sources-list {
-      width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 6px; margin-top: 0.5rem;
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #eef2f7;
+      margin: 0;
+      padding: 2rem;
     }
-    select[multiple] { display: none; }
-    .sources-list { background: #fafafa; max-height: 6rem; overflow-y: auto; }
+    .container {
+      max-width: 1100px;
+      margin: auto;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 1.5rem;
+    }
+    form {
+      background: #fff;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-bottom: 1rem;
+      font-weight: 500;
+      color: #555;
+    }
+    select, input, #editor, .sources-list {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-top: 0.5rem;
+      box-sizing: border-box;
+    }
+    select {
+      height: auto;
+      appearance: none;
+      background: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="10"><path fill="%23555" d="M1 1l6 6 6-6"/></svg>') no-repeat calc(100% - 1rem) center/10px;
+    }
+    select[multiple] {
+      background-position: 1rem top;
+      background-size: 10px;
+      padding-right: 2rem;
+      height: 8rem;
+    }
+    .sources-list {
+      background: #fafafa;
+      max-height: 6rem;
+      overflow-y: auto;
+    }
     button {
-      background: #FF621D; color: #fff; border: none; padding: 0.75rem 1.5rem;
-      border-radius: 6px; cursor: pointer; font-weight: 600; margin-right: .5rem;
+      background: #FF621D;
+      color: #fff;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      margin-right: .5rem;
+      transition: background .2s;
     }
     button:hover { background: #e55d1c; }
     button:disabled { background: #ccc; cursor: not-allowed; }
-    #editor { height: 180px; background: #fff; margin-bottom: 1rem; }
+    #editor {
+      height: 180px;
+      background: #fff;
+      margin-bottom: 1rem;
+    }
     .previews {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(45%, 1fr));
-      gap: 2rem; margin-top: 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(45%, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
     }
     .preview-card {
-      background: #fff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      overflow: hidden; display: flex; flex-direction: column;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
     .preview-header {
-      background: #FF621D; color: #fff; padding: 0.75rem 1rem; font-weight: 600;
+      background: #FF621D;
+      color: #fff;
+      padding: 0.75rem 1rem;
+      font-weight: 600;
     }
     .preview-frame { border: none; width: 100%; }
   </style>
@@ -49,36 +108,44 @@
   <div class="container">
     <h1>Generador de E-mail Multimarcas</h1>
     <form id="config-form" onsubmit="return false;">
-      <label>Seleccionar plantillas:</label>
-      <div class="checkbox-list" id="template_selector">
-        <label><input type="checkbox" value="all" />Todas</label>
-        <label><input type="checkbox" value="mystique_campaña_eng.html" />Mystique</label>
-        <label><input type="checkbox" value="Planet_campaña_eng.html" />Planet</label>
-        <label><input type="checkbox" value="Royalton_campaña_eng.html" />Royalton</label>
-        <label><input type="checkbox" value="Nexus_campaña_eng.html" />Nexus</label>
-        <label><input type="checkbox" value="VistaSol_campaña_eng.html" />VistaSol</label>
-        <label><input type="checkbox" value="latam_campaña_eng.html" />LatAm</label>
-        <label><input type="checkbox" value="hype_campaña_eng.html" />Hype</label>
-        <label><input type="checkbox" value="Prime_campaña_eng.html" />Prime</label>
-        <label><input type="checkbox" value="princess_campaña_eng.html" />Princess</label>
-      </div>
+      <label>
+        Seleccionar plantillas<br>
+        <select id="template_selector" multiple>
+          <option value="all">Todas</option>
+          <option value="mystique_campaña_eng.html">Mystique</option>
+          <option value="Planet_campaña_eng.html">Planet</option>
+          <option value="Royalton_campaña_eng.html">Royalton</option>
+          <option value="Nexus_campaña_eng.html">Nexus</option>
+          <option value="VistaSol_campaña_eng.html">VistaSol</option>
+          <option value="latam_campaña_eng.html">LatAm</option>
+          <option value="hype_campaña_eng.html">Hype</option>
+          <option value="Prime_campaña_eng.html">Prime</option>
+          <option value="princess_campaña_eng.html">Princess</option>
+        </select>
+      </label>
 
-      <label>UTM Source (por marca, solo lectura):</label>
+      <label>
+        UTM Source (por marca, solo lectura):
+      </label>
       <div class="sources-list" id="sources_list"></div>
 
-      <label>UTM Medium (solo lectura):
+      <label>
+        UTM Medium (solo lectura):<br>
         <input type="text" id="utm_medium" disabled />
       </label>
 
-      <label>UTM Campaign (editable):
+      <label>
+        UTM Campaign (editable):<br>
         <input type="text" id="utm_campaign" placeholder="campaign_2_julio" />
       </label>
 
-      <label>Banner image filename (p.ej. ES_eng.gif):
+      <label>
+        Banner image filename (p.ej. ES_eng.gif):<br>
         <input type="text" id="banner_image_name" value="ES_eng.gif" />
       </label>
 
-      <label>Contenido dinámico (negritas, saltos, emojis, enlaces…):
+      <label>
+        Contenido dinámico (negritas, saltos, emojis, enlaces…):
         <div id="editor"></div>
       </label>
 
@@ -92,7 +159,9 @@
   <script>
     const quill = new Quill('#editor', {
       theme: 'snow',
-      modules: { toolbar: [['bold','italic','underline'], ['link'], [{ list:'ordered'},{ list:'bullet'}]] }
+      modules: {
+        toolbar: [['bold','italic','underline'], ['link'], [{ list:'ordered'},{ list:'bullet'}]]
+      }
     });
 
     const templateConfig = {
@@ -107,44 +176,42 @@
       "princess_campaña_eng.html": { base_url:"https://princess.nexustours.com", utm_source:"princess", utm_medium:"mail" }
     };
 
-    const checkboxes = Array.from(document.querySelectorAll('input[type="checkbox"]'));
+    const sel = document.getElementById('template_selector');
     const sourcesList = document.getElementById('sources_list');
-    const utmMediumInput = document.getElementById('utm_medium');
-    const utmCampaignInput = document.getElementById('utm_campaign');
+    const utmMed = document.getElementById('utm_medium');
+    const utmCamp = document.getElementById('utm_campaign');
     let lastRenderedMap = {};
 
-    function onTemplateChange() {
-      let selected = checkboxes.filter(cb => cb.checked).map(cb => cb.value);
-      if (selected.includes('all')) selected = Object.keys(templateConfig);
-      populateList(selected);
-    }
-
-    function populateList(list) {
+    sel.addEventListener('change', () => {
+      let vals = Array.from(sel.selectedOptions).map(o => o.value);
+      if (vals.includes('all')) vals = Object.keys(templateConfig);
+      // Medium from first
+      const first = vals[0];
+      utmMed.value = templateConfig[first].utm_medium;
+      // list sources
       sourcesList.innerHTML = '';
-      if (!list.length) { utmMediumInput.value = ''; return; }
-      const first = list[0];
-      utmMediumInput.value = templateConfig[first].utm_medium;
-      list.forEach(key => {
-        const div = document.createElement('div');
-        div.textContent = `${key.replace('_campaña_eng.html','')}: ${templateConfig[key].utm_source}`;
-        sourcesList.appendChild(div);
+      vals.forEach(k => {
+        if (k==='all') return;
+        const d = document.createElement('div');
+        d.textContent = `${k.replace('_campaña_eng.html','')}: ${templateConfig[k].utm_source}`;
+        sourcesList.appendChild(d);
       });
-    }
+    });
 
-    checkboxes.forEach(cb => cb.addEventListener('change', onTemplateChange));
-    onTemplateChange();
+    // trigger initial
+    sel.dispatchEvent(new Event('change'));
 
     async function generatePreview() {
-      let selected = checkboxes.filter(cb => cb.checked).map(cb => cb.value);
-      if (selected.includes('all')) selected = Object.keys(templateConfig);
-      if (!selected.length) return alert('Selecciona al menos una plantilla.');
+      let vals = Array.from(sel.selectedOptions).map(o => o.value);
+      if (vals.includes('all')) vals = Object.keys(templateConfig);
+      if (!vals.length) return alert('Selecciona al menos una plantilla.');
       const previews = document.getElementById('previews');
       previews.innerHTML = '';
-      const rawHtml = quill.root.innerHTML;
-      const campaign = utmCampaignInput.value.trim();
+      const raw = quill.root.innerHTML;
+      const campaign = utmCamp.value.trim();
 
-      for (const tplFile of selected) {
-        const cfg = templateConfig[tplFile];
+      for (const f of vals) {
+        const cfg = templateConfig[f];
         const data = {
           base_url: cfg.base_url,
           utm_source: cfg.utm_source,
@@ -152,58 +219,49 @@
           utm_campaign: campaign,
           banner_image_name: document.getElementById('banner_image_name').value.trim()
         };
-
-        const container = document.createElement('div');
-        container.innerHTML = rawHtml;
-        container.querySelectorAll('a').forEach(a => {
+        const c = document.createElement('div'); c.innerHTML = raw;
+        c.querySelectorAll('a').forEach(a => {
           let href = a.getAttribute('href') || a.textContent.trim();
           if (!/^https?:\/\//i.test(href)) href = 'https://' + href;
           href = href.toLowerCase();
-          const sep = href.includes('?') ? '&' : '?';
+          const sep = href.includes('?')?'&':'?';
           href = href + sep +
-            'utm_source='   + encodeURIComponent(data.utm_source) +
-            '&utm_medium='  + encodeURIComponent(data.utm_medium) +
-            '&utm_campaign='+ encodeURIComponent(data.utm_campaign) +
+            'utm_source=' + encodeURIComponent(data.utm_source) +
+            '&utm_medium=' + encodeURIComponent(data.utm_medium) +
+            '&utm_campaign=' + encodeURIComponent(data.utm_campaign) +
             '&contact_id={{contact.id}}';
           a.setAttribute('href', href);
         });
-        data.body_content = container.innerHTML;
+        data.body_content = c.innerHTML;
 
-        const tplText = await fetch(tplFile).then(r => r.text());
-        const rendered = Mustache.render(tplText, data);
-        lastRenderedMap[tplFile] = rendered;
+        const tpl = await fetch(f).then(r=>r.text());
+        const html = Mustache.render(tpl, data);
+        lastRenderedMap[f] = html;
 
-        const card = document.createElement('div');
-        card.className = 'preview-card';
-        const header = document.createElement('div');
-        header.className = 'preview-header';
-        header.textContent = tplFile.replace('_campaña_eng.html','');
-        const frame = document.createElement('iframe');
-        frame.className = 'preview-frame';
-        frame.srcdoc = rendered;
-        frame.onload = () => {
-          frame.style.height = frame.contentDocument.body.scrollHeight + 'px';
-        };
-        card.appendChild(header);
-        card.appendChild(frame);
+        const card = document.createElement('div'); card.className='preview-card';
+        const hdr = document.createElement('div'); hdr.className='preview-header';
+        hdr.textContent = f.replace('_campaña_eng.html','');
+        const frm = document.createElement('iframe'); frm.className='preview-frame';
+        frm.srcdoc = html;
+        frm.onload = () => frm.style.height = frm.contentDocument.body.scrollHeight + 'px';
+        card.append(hdr, frm);
         previews.appendChild(card);
       }
       document.getElementById('download-btn').disabled = false;
     }
 
     function downloadHTML() {
-      let selected = checkboxes.filter(cb => cb.checked).map(cb => cb.value);
-      if (selected.includes('all')) selected = Object.keys(templateConfig);
-      for (const tplFile of selected) {
-        const html = lastRenderedMap[tplFile];
-        const blob = new Blob([html], { type: 'text/html' });
+      let vals = Array.from(sel.selectedOptions).map(o => o.value);
+      if (vals.includes('all')) vals = Object.keys(templateConfig);
+      vals.forEach(f => {
+        const blob = new Blob([lastRenderedMap[f]],{type:'text/html'});
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = tplFile.replace('.html','-custom.html');
+        a.download = f.replace('.html','-custom.html');
         a.click();
         URL.revokeObjectURL(url);
-      }
+      });
     }
   </script>
 </body>
