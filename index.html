@@ -12,94 +12,67 @@
   <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
 
   <style>
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: #eef2f7;
-      margin: 0;
-      padding: 2rem;
+    body { font-family: 'DM Sans', sans-serif; background: #eef2f7; margin: 0; padding: 2rem; }
+    .container { max-width: 1100px; margin: auto; }
+    h1 { text-align: center; color: #333; margin-bottom: 1.5rem; }
+    form { background: #fff; padding: 1.5rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    label { display: block; margin-bottom: 1rem; font-weight: 500; color: #555; }
+
+    /* Dropdown Multiselect */
+    .dropdown { position: relative; }
+    .dropdown-selected {
+      width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 6px;
+      background: #fff; cursor: pointer; box-sizing: border-box;
+      display: flex; justify-content: space-between; align-items: center;
     }
-    .container {
-      max-width: 1100px;
-      margin: auto;
+    .dropdown-selected::after { content: '▾'; font-size: 0.8rem; color: #555; }
+    .dropdown.open .dropdown-selected::after { content: '▴'; }
+    .dropdown-options {
+      position: absolute; top: 100%; left: 0; right: 0;
+      background: #fff; border: 1px solid #ccc; border-radius: 6px;
+      max-height: 8rem; overflow-y: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      z-index: 100; display: none; padding: 0.5rem;
     }
-    h1 {
-      text-align: center;
-      color: #333;
-      margin-bottom: 1.5rem;
+    .dropdown.open .dropdown-options { display: block; }
+    .dropdown-options label {
+      display: flex; align-items: center; padding: 0.25rem 0.5rem; cursor: pointer;
     }
-    form {
-      background: #fff;
-      padding: 1.5rem;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    label {
-      display: block;
-      margin-bottom: 1rem;
-      font-weight: 500;
-      color: #555;
-    }
-    select, input, #editor, .sources-list {
-      width: 100%;
-      padding: 0.75rem;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      margin-top: 0.5rem;
-      box-sizing: border-box;
-    }
-    select {
-      height: auto;
-      appearance: none;
-      background: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="10"><path fill="%23555" d="M1 1l6 6 6-6"/></svg>') no-repeat calc(100% - 1rem) center/10px;
-    }
-    select[multiple] {
-      background-position: 1rem top;
-      background-size: 10px;
-      padding-right: 2rem;
-      height: 8rem;
-    }
+    .dropdown-options label:hover { background: #f0f0f0; }
+    .dropdown-options input { margin-right: 0.5rem; }
+
     .sources-list {
-      background: #fafafa;
-      max-height: 6rem;
-      overflow-y: auto;
+      background: #fafafa; padding: 0.75rem;
+      border: 1px solid #ddd; border-radius: 6px;
+      max-height: 6rem; overflow-y: auto; box-sizing: border-box;
+      margin-bottom: 1rem;
     }
+
+    input, #editor {
+      width: 100%; padding: 0.75rem; border: 1px solid #ccc;
+      border-radius: 6px; margin-top: 0.5rem; box-sizing: border-box;
+    }
+
+    #editor { height: 180px; background: #fff; margin-bottom: 1rem; }
+
     button {
-      background: #FF621D;
-      color: #fff;
-      border: none;
-      padding: 0.75rem 1.5rem;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 600;
-      margin-right: .5rem;
+      background: #FF621D; color: #fff; border: none;
+      padding: 0.75rem 1.5rem; border-radius: 6px;
+      cursor: pointer; font-weight: 600; margin-right: .5rem;
       transition: background .2s;
     }
     button:hover { background: #e55d1c; }
     button:disabled { background: #ccc; cursor: not-allowed; }
-    #editor {
-      height: 180px;
-      background: #fff;
-      margin-bottom: 1rem;
-    }
+
     .previews {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(45%, 1fr));
-      gap: 2rem;
-      margin-top: 2rem;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(45%, 1fr));
+      gap: 2rem; margin-top: 2rem;
     }
     .preview-card {
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
+      background: #fff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      overflow: hidden; display: flex; flex-direction: column;
     }
     .preview-header {
-      background: #FF621D;
-      color: #fff;
-      padding: 0.75rem 1rem;
-      font-weight: 600;
+      background: #FF621D; color: #fff; padding: 0.75rem 1rem; font-weight: 600;
     }
     .preview-frame { border: none; width: 100%; }
   </style>
@@ -108,46 +81,37 @@
   <div class="container">
     <h1>Generador de E-mail Multimarcas</h1>
     <form id="config-form" onsubmit="return false;">
-      <label>
-        Seleccionar plantillas<br>
-        <select id="template_selector" multiple>
-          <option value="all">Todas</option>
-          <option value="mystique_campaña_eng.html">Mystique</option>
-          <option value="Planet_campaña_eng.html">Planet</option>
-          <option value="Royalton_campaña_eng.html">Royalton</option>
-          <option value="Nexus_campaña_eng.html">Nexus</option>
-          <option value="VistaSol_campaña_eng.html">VistaSol</option>
-          <option value="latam_campaña_eng.html">LatAm</option>
-          <option value="hype_campaña_eng.html">Hype</option>
-          <option value="Prime_campaña_eng.html">Prime</option>
-          <option value="princess_campaña_eng.html">Princess</option>
-        </select>
-      </label>
+      <label>Seleccionar plantillas:</label>
+      <div class="dropdown" id="template_dropdown">
+        <div class="dropdown-selected" id="dropdownBtn">Seleccionar…</div>
+        <div class="dropdown-options" id="template_selector">
+          <label><input type="checkbox" value="all" />Todas</label>
+          <label><input type="checkbox" value="mystique_campaña_eng.html" />Mystique</label>
+          <label><input type="checkbox" value="Planet_campaña_eng.html" />Planet</label>
+          <label><input type="checkbox" value="Royalton_campaña_eng.html" />Royalton</label>
+          <label><input type="checkbox" value="Nexus_campaña_eng.html" />Nexus</label>
+          <label><input type="checkbox" value="VistaSol_campaña_eng.html" />VistaSol</label>
+          <label><input type="checkbox" value="latam_campaña_eng.html" />LatAm</label>
+          <label><input type="checkbox" value="hype_campaña_eng.html" />Hype</label>
+          <label><input type="checkbox" value="Prime_campaña_eng.html" />Prime</label>
+          <label><input type="checkbox" value="princess_campaña_eng.html" />Princess</label>
+        </div>
+      </div>
 
-      <label>
-        UTM Source (por marca, solo lectura):
-      </label>
+      <label>UTM Source (por marca, solo lectura):</label>
       <div class="sources-list" id="sources_list"></div>
 
-      <label>
-        UTM Medium (solo lectura):<br>
-        <input type="text" id="utm_medium" disabled />
-      </label>
+      <label>UTM Medium (solo lectura):</label>
+      <input type="text" id="utm_medium" disabled />
 
-      <label>
-        UTM Campaign (editable):<br>
-        <input type="text" id="utm_campaign" placeholder="campaign_2_julio" />
-      </label>
+      <label>UTM Campaign (editable):</label>
+      <input type="text" id="utm_campaign" placeholder="campaign_2_julio" />
 
-      <label>
-        Banner image filename (p.ej. ES_eng.gif):<br>
-        <input type="text" id="banner_image_name" value="ES_eng.gif" />
-      </label>
+      <label>Banner image filename (p.ej. ES_eng.gif):</label>
+      <input type="text" id="banner_image_name" value="ES_eng.gif" />
 
-      <label>
-        Contenido dinámico (negritas, saltos, emojis, enlaces…):
-        <div id="editor"></div>
-      </label>
+      <label>Contenido dinámico (negritas, saltos, emojis, enlaces…):</label>
+      <div id="editor"></div>
 
       <button type="button" onclick="generatePreview()">Generar Previsualización</button>
       <button type="button" id="download-btn" onclick="downloadHTML()" disabled>Descargar HTML</button>
@@ -159,54 +123,59 @@
   <script>
     const quill = new Quill('#editor', {
       theme: 'snow',
-      modules: {
-        toolbar: [['bold','italic','underline'], ['link'], [{ list:'ordered'},{ list:'bullet'}]]
-      }
+      modules: { toolbar: [['bold','italic','underline'], ['link'], [{ list:'ordered'},{ list:'bullet'}]] }
     });
 
     const templateConfig = {
-      "mystique_campaña_eng.html": { base_url:"https://mystique.nexustours.com/services", utm_source:"mystique", utm_medium:"mail" },
-      "Planet_campaña_eng.html":   { base_url:"https://planet.nexustours.com", utm_source:"PH", utm_medium:"mail" },
-      "Royalton_campaña_eng.html": { base_url:"https://royalton.nexustours.com/services", utm_source:"royalton", utm_medium:"mail" },
-      "Nexus_campaña_eng.html":    { base_url:"https://www.nexustours.com/discounts", utm_source:"nexusB2C", utm_medium:"mail" },
-      "VistaSol_campaña_eng.html": { base_url:"https://vistasol.nexustours.com", utm_source:"vistasol", utm_medium:"mail" },
-      "latam_campaña_eng.html":    { base_url:"https://latamtravel.nexustours.com", utm_source:"latam", utm_medium:"mail" },
-      "hype_campaña_eng.html":     { base_url:"https://www.cancuntransfersandtours.com", utm_source:"HypeTravel", utm_medium:"mail" },
-      "Prime_campaña_eng.html":    { base_url:"https://primetravelersclub.nexustours.com", utm_source:"prime", utm_medium:"mail" },
-      "princess_campaña_eng.html": { base_url:"https://princess.nexustours.com", utm_source:"princess", utm_medium:"mail" }
+      "mystique_campaña_eng.html": { base_url: "https://mystique.nexustours.com/services", utm_source: "mystique", utm_medium: "mail" },
+      "Planet_campaña_eng.html":   { base_url: "https://planet.nexustours.com", utm_source: "PH", utm_medium: "mail" },
+      "Royalton_campaña_eng.html": { base_url: "https://royalton.nexustours.com/services", utm_source: "royalton", utm_medium: "mail" },
+      "Nexus_campaña_eng.html":    { base_url: "https://www.nexustours.com/discounts", utm_source: "nexusB2C", utm_medium: "mail" },
+      "VistaSol_campaña_eng.html": { base_url: "https://vistasol.nexustours.com", utm_source: "vistasol", utm_medium: "mail" },
+      "latam_campaña_eng.html":    { base_url: "https://latamtravel.nexustours.com", utm_source: "latam", utm_medium: "mail" },
+      "hype_campaña_eng.html":     { base_url: "https://www.cancuntransfersandtours.com", utm_source: "HypeTravel", utm_medium: "mail" },
+      "Prime_campaña_eng.html":    { base_url: "https://primetravelersclub.nexustours.com", utm_source: "prime", utm_medium: "mail" },
+      "princess_campaña_eng.html": { base_url: "https://princess.nexustours.com", utm_source: "princess", utm_medium: "mail" }
     };
 
-    const sel = document.getElementById('template_selector');
+    const dropdown = document.getElementById('template_dropdown');
+    const dropdownBtn = document.getElementById('dropdownBtn');
+    const selector = document.getElementById('template_selector');
+    const checkboxes = Array.from(selector.querySelectorAll('input[type="checkbox"]'));
     const sourcesList = document.getElementById('sources_list');
     const utmMed = document.getElementById('utm_medium');
     const utmCamp = document.getElementById('utm_campaign');
     let lastRenderedMap = {};
 
-    sel.addEventListener('change', () => {
-      let vals = Array.from(sel.selectedOptions).map(o => o.value);
+    function onTemplateChange() {
+      let vals = checkboxes.filter(cb => cb.checked).map(cb => cb.value);
       if (vals.includes('all')) vals = Object.keys(templateConfig);
-      // Medium from first
-      const first = vals[0];
-      utmMed.value = templateConfig[first].utm_medium;
-      // list sources
+      const label = vals.includes('all')
+        ? 'Todas'
+        : vals.map(v => v.replace('_campaña_eng.html','')).join(', ');
+      dropdownBtn.textContent = label || 'Seleccionar…';
+
       sourcesList.innerHTML = '';
+      if (!vals.length) { utmMed.value = ''; return; }
+      utmMed.value = templateConfig[vals[0]].utm_medium;
       vals.forEach(k => {
-        if (k==='all') return;
         const d = document.createElement('div');
-        d.textContent = `${k.replace('_campaña_eng.html','')}: ${templateConfig[k].utm_source}`;
+        d.textContent = `${k.replace('_campaña_eng.html','')}: ${templateConfig[k].
+utm_source}`;
         sourcesList.appendChild(d);
       });
-    });
+    }
 
-    // trigger initial
-    sel.dispatchEvent(new Event('change'));
+    checkboxes.forEach(cb => cb.addEventListener('change', onTemplateChange));
+    dropdownBtn.addEventListener('click', () => dropdown.classList.toggle('open'));
+    document.addEventListener('click', e => { if(!dropdown.contains(e.target)) dropdown.classList.remove('open'); });
+    onTemplateChange();
 
     async function generatePreview() {
-      let vals = Array.from(sel.selectedOptions).map(o => o.value);
+      let vals = checkboxes.filter(cb => cb.checked).map(cb => cb.value);
       if (vals.includes('all')) vals = Object.keys(templateConfig);
       if (!vals.length) return alert('Selecciona al menos una plantilla.');
-      const previews = document.getElementById('previews');
-      previews.innerHTML = '';
+      const previews = document.getElementById('previews'); previews.innerHTML = '';
       const raw = quill.root.innerHTML;
       const campaign = utmCamp.value.trim();
 
@@ -224,7 +193,7 @@
           let href = a.getAttribute('href') || a.textContent.trim();
           if (!/^https?:\/\//i.test(href)) href = 'https://' + href;
           href = href.toLowerCase();
-          const sep = href.includes('?')?'&':'?';
+          const sep = href.includes('?') ? '&' : '?';
           href = href + sep +
             'utm_source=' + encodeURIComponent(data.utm_source) +
             '&utm_medium=' + encodeURIComponent(data.utm_medium) +
@@ -234,15 +203,13 @@
         });
         data.body_content = c.innerHTML;
 
-        const tpl = await fetch(f).then(r=>r.text());
+        const tpl = await fetch(f).then(r => r.text());
         const html = Mustache.render(tpl, data);
         lastRenderedMap[f] = html;
 
-        const card = document.createElement('div'); card.className='preview-card';
-        const hdr = document.createElement('div'); hdr.className='preview-header';
-        hdr.textContent = f.replace('_campaña_eng.html','');
-        const frm = document.createElement('iframe'); frm.className='preview-frame';
-        frm.srcdoc = html;
+        const card = document.createElement('div'); card.className = 'preview-card';
+        const hdr = document.createElement('div'); hdr.className = 'preview-header'; hdr.textContent = f.replace('_campaña_eng.html','');
+        const frm = document.createElement('iframe'); frm.className = 'preview-frame'; frm.srcdoc = html;
         frm.onload = () => frm.style.height = frm.contentDocument.body.scrollHeight + 'px';
         card.append(hdr, frm);
         previews.appendChild(card);
@@ -251,15 +218,12 @@
     }
 
     function downloadHTML() {
-      let vals = Array.from(sel.selectedOptions).map(o => o.value);
+      let vals = checkboxes.filter(cb => cb.checked).map(cb => cb.value);
       if (vals.includes('all')) vals = Object.keys(templateConfig);
       vals.forEach(f => {
-        const blob = new Blob([lastRenderedMap[f]],{type:'text/html'});
+        const blob = new Blob([lastRenderedMap[f]], { type: 'text/html' });
         const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = f.replace('.html','-custom.html');
-        a.click();
+        const a = document.createElement('a'); a.href = url; a.download = f.replace('.html','-custom.html'); a.click();
         URL.revokeObjectURL(url);
       });
     }
