@@ -32,7 +32,7 @@
         <option value="Nexus_campaña_eng.html">Nexus</option>
         <option value="VistaSol_campaña_eng.html">VistaSol</option>
         <option value="latam_campaña_eng.html">LatAm</option>
-        <option value="hype_campaña_eng.html">HypeTravel</option>
+        <option value="hype_campaña_eng.html">Hype</option>
         <option value="Prime_campaña_eng.html">Prime</option>
         <option value="princess_campaña_eng.html">Princess</option>
         <option value="all">Todas</option>
@@ -55,88 +55,41 @@
   <div class="previews" id="previews"></div>
 
   <script>
-    // Inicializa editor WYSIWYG
+    // Inicializa Quill
     const quill = new Quill('#editor', {
       theme: 'snow',
-      modules: { toolbar: [['bold','italic','underline'], ['link'], [{ 'list': 'ordered' }, { 'list': 'bullet' }]] }
+      modules: { toolbar: [['bold','italic','underline'], ['link'], [{ 'list':'ordered'},{ 'list':'bullet'}]] }
     });
 
-    // Configuración específica de cada plantilla, extraída de los HTML originales
+    // Config propia de cada plantilla
     const templateConfig = {
-      "mystique_campaña_eng.html": {
-        base_url:    "https://mystique.nexustours.com/services",
-        utm_source:  "mystique",
-        utm_medium:  "mail",
-        utm_campaign:"campaign_2_julio"
-      },
-      "Planet_campaña_eng.html": {
-        base_url:    "https://planet.nexustours.com",
-        utm_source:  "PH",
-        utm_medium:  "mail",
-        utm_campaign:"campaign_2_julio"
-      },
-      "Royalton_campaña_eng.html": {
-        base_url:    "https://royalton.nexustours.com/services",
-        utm_source:  "royalton",
-        utm_medium:  "mail",
-        utm_campaign:"campaign_2_julio"
-      },
-      "Nexus_campaña_eng.html": {
-        base_url:    "https://www.nexustours.com/discounts",
-        utm_source:  "nexusB2C",
-        utm_medium:  "mail",
-        utm_campaign:"campaign_2_julio"
-      },
-      "VistaSol_campaña_eng.html": {
-        base_url:    "https://vistasol.nexustours.com",
-        utm_source:  "vistasol",
-        utm_medium:  "mail",
-        utm_campaign:"campaign_2_julio"
-      },
-      "latam_campaña_eng.html": {
-        base_url:    "https://latamtravel.nexustours.com",
-        utm_source:  "latam",
-        utm_medium:  "mail",
-        utm_campaign:"campaign_2_julio"
-      },
-      "hype_campaña_eng.html": {
-        base_url:    "https://www.cancuntransfersandtours.com",
-        utm_source:  "HypeTravel",
-        utm_medium:  "mail",
-        utm_campaign:"campaign_2_julio"  
-      },
-      "Prime_campaña_eng.html": {
-        base_url:    "https://primetravelersclub.nexustours.com",
-        utm_source:  "prime",
-        utm_medium:  "mail",
-        utm_campaign:"campaign_2_julio"
-      },
-      "princess_campaña_eng.html": {
-        base_url:    "https://princess.nexustours.com",
-        utm_source:  "princess",
-        utm_medium:  "mail",
-        utm_campaign:"campaign_2_julio"
-      }
+      "mystique_campaña_eng.html": { base_url:"https://mystique.nexustours.com/services", utm_source:"mystique", utm_medium:"mail", utm_campaign:"campaign_2_julio" },
+      "Planet_campaña_eng.html":   { base_url:"https://planet.nexustours.com", utm_source:"PH", utm_medium:"mail", utm_campaign:"campaign_2_julio" },
+      "Royalton_campaña_eng.html": { base_url:"https://royalton.nexustours.com/services", utm_source:"royalton", utm_medium:"mail", utm_campaign:"campaign_2_julio" },
+      "Nexus_campaña_eng.html":    { base_url:"https://www.nexustours.com/discounts", utm_source:"nexusB2C", utm_medium:"mail", utm_campaign:"campaign_2_julio" },
+      "VistaSol_campaña_eng.html": { base_url:"https://vistasol.nexustours.com", utm_source:"vistasol", utm_medium:"mail", utm_campaign:"campaign_2_julio" },
+      "latam_campaña_eng.html":    { base_url:"https://latamtravel.nexustours.com", utm_source:"latam", utm_medium:"mail", utm_campaign:"campaign_2_julio" },
+      "hype_campaña_eng.html":     { base_url:"https://www.cancuntransfersandtours.com", utm_source:"HypeTravel", utm_medium:"mail", utm_campaign:"campaign_2_julio" },
+      "Prime_campaña_eng.html":    { base_url:"https://primetravelersclub.nexustours.com", utm_source:"prime", utm_medium:"mail", utm_campaign:"campaign_2_julio" },
+      "princess_campaña_eng.html": { base_url:"https://princess.nexustours.com", utm_source:"princess", utm_medium:"mail", utm_campaign:"campaign_2_julio" }
     };
-
     let lastRenderedMap = {};
 
+    // Previsualiza una o todas las plantillas
     async function generatePreview() {
       const sel = document.getElementById('template_selector').value;
       const toProcess = sel === 'all' ? Object.keys(templateConfig) : [sel];
       const previews = document.getElementById('previews');
       previews.innerHTML = '';
-
-      // Lee contenido formateado
       const rawHtml = quill.root.innerHTML;
+
       for (const tplFile of toProcess) {
         const cfg = templateConfig[tplFile];
         const data = { ...cfg, banner_image_name: document.getElementById('banner_image_name').value.trim() };
 
         // Procesa enlaces dentro del editor
-        const container = document.createElement('div');
-        container.innerHTML = rawHtml;
-        container.querySelectorAll('a').forEach(a => {
+        const c = document.createElement('div'); c.innerHTML = rawHtml;
+        c.querySelectorAll('a').forEach(a => {
           let href = a.getAttribute('href') || a.textContent.trim();
           if (!/^https?:\/\//i.test(href)) href = 'https://' + href;
           href = href.toLowerCase();
@@ -148,42 +101,41 @@
             '&contact_id={{contact.id}}';
           a.setAttribute('href', href);
         });
-        data.body_content = container.innerHTML;
+        data.body_content = c.innerHTML;
 
-        // Renderiza plantilla
+        // Render Mustache
         const tplText  = await fetch(tplFile).then(r => r.text());
         const rendered = Mustache.render(tplText, data);
         lastRenderedMap[tplFile] = rendered;
 
-        // Añade iframe de preview
-        const frame = document.createElement('iframe');
-        frame.className = 'preview-frame';
-        frame.srcdoc   = rendered;
-        previews.appendChild(frame);
+        // Añade iframe
+        const f = document.createElement('iframe');
+        f.className = 'preview-frame'; f.srcdoc = rendered;
+        previews.appendChild(f);
       }
-
       document.getElementById('download-btn').disabled = false;
     }
 
+    // Descarga uno o todos
     function downloadHTML() {
       const sel = document.getElementById('template_selector').value;
       if (sel === 'all') {
-        Object.entries(lastRenderedMap).forEach(([file, html]) => {
+        for (const [file, html] of Object.entries(lastRenderedMap)) {
           const blob = new Blob([html], { type: 'text/html' });
           const url  = URL.createObjectURL(blob);
           const a    = document.createElement('a');
           a.href     = url;
-          a.download = file.replace('.html', '-custom.html');
+          a.download = file.replace('.html','-custom.html');
           a.click();
           URL.revokeObjectURL(url);
-        });
+        }
       } else {
         const html = lastRenderedMap[sel];
         const blob = new Blob([html], { type: 'text/html' });
         const url  = URL.createObjectURL(blob);
         const a    = document.createElement('a');
         a.href     = url;
-        a.download = sel.replace('.html', '-custom.html');
+        a.download = sel.replace('.html','-custom.html');
         a.click();
         URL.revokeObjectURL(url);
       }
