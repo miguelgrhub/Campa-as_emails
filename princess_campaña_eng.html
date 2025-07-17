@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800;9..40,900&display=swap" rel="stylesheet">
+        <meta name="viewport" content="width=device-width, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta charset="UTF-8">
+        <title></title>
+        <style>
+            * {
+                font-family: 'DM Sans', sans-serif;
+                color: #333333;
+                box-sizing: border-box;
+            }
+
+            a {
+                text-decoration: none;
+            }
+
+            .container-email {
+                width: 100%;
+            }
+
+            .body-email {
+                width: 600px;
+                margin: auto;
+                background-color: #F4F4F4;
+            }
+
+            @media(max-width:800px) {
+                .body-email {
+                    width: 100%;
+                }
+            }
+
+            .banner-header {
+                background-image: url("https://www.nexustours.com/images/upload/B2C/Home/SliderBuscador/{{banner_image_name}}");
+                background-position: center;
+                background-size: cover;
+                height: 223px;
+                display: block;
+            }
+
+            @media(max-width:800px) {
+                .banner-header {
+                    height: 36vw !important;
+                }
+            }
+
+            .line-gradient-image {
+                margin: auto;
+                width: 80%;
+                height: 5px;
+                background-position: center;
+                background-size: cover;
+                background-image: url('https://www.nexustours.com/images/upload//Email-content/Background-RR-Header-Line.png');
+            }
+
+            .border-bottom-line {
+                border-bottom-right-radius: 70px;
+                border-bottom-left-radius: 70px;
+            }
+
+            .border-top-line {
+                border-top-right-radius: 70px;
+                border-top-left-radius: 70px;
+            }
+
+            .logo-nexus {
+                width: fit-content;
+                margin: auto;
+                padding: 21px 0px;
+            }
+
+            .card-email {
+                background-color: #FFF;
+                width: 95%;
+                margin: auto;
+                border-radius: 15px;
+                padding: 25px 22px;
+                box-sizing: border-box;
+            }
+
+            .margin-bottom-22 {
+                margin-bottom: 22px;
+            }
+
+            .parrafo-card {
+                font-size: 16px;
+                font-weight: 400;
+                line-height: 134%;
+                margin: 0;
+            }
+
+            .orange-nexus {
+                color: #F0A42B;
+            }
+
+            .bold-text {
+                font-weight: 700;
+            }
+
+            .margin-bottom-10 {
+                margin-bottom: 10px;
+            }
+
+            .margin-bottom-15 {
+                margin-bottom: 15px;
+            }
+
+            .container-img-banner-transfer {
+                width: 95%;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .activador-img-banner-transfer {
+                width: 100%;
+            }
+
+            .img-banner-transfer {
+                width: 100%;
+                border-radius: 16px;
+                background-image: url("https://www.nexustours.com/images/upload//Email-content/princess_transfer.png");
+                background-size: cover;
+                background-position: center;
+                padding: 10px 10px 10px 5px;
+            }
+
+            @media(max-width:800px) {
+                .img-banner-transfer {
+                    padding: 4vw 2vw !important;
+                }
+            }
+
+            .img-banner-kat-container {
+                width: 100%;
+                border-radius: 16px;
+                background-image: url("https://www.nexustours.com/images/upload//Email-content/Background-RR-Kat.png");
+                background-size: cover;
+                padding: 13px 0px 13px 10px;
+            }
+
+            @media(max-width:800px) {
+                .img-banner-kat-container {
+                    padding: 3vw 2vw !important;
+                }
+            }
+
+            .logo-representative {
+                width: 90px;
+                height: 82px;
+            }
+
+            .container-text {
+                width: fit-content;
+                margin-left: auto;
+                margin-right: auto;
+                padding: 0 2.5%;
+            }
+
+            .text-representative {
+                font-size: 20px;
+                line-height: 130%;
+                font-weight: 700;
+                letter-spacing: -.41px;
+                margin: 0;
+                text-align: center;
+            }
+
+            .background-redes-table {
+                background-color: #333;
+            }
+
+            .container-redes {
+                width: fit-content;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .redes {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                background-color: #FF621D;
+            }
+
+            .table-redes {
+                border-spacing: 5px;
+                padding: 10px 0px;
+            }
+
+            .container-table-productos {
+                width: 95%;
+                margin: auto;
+                box-sizing: border-box;
+                border: 1px solid #ddd;
+                border-radius: 15px;
+            }
+
+            .product-title {
+                text-align: left;
+                padding: 0px 10px;
+                height: auto;
+                background-color: #FF621D;
+                color: #FFF;
+                line-height: 190%;
+            }
+
+            .product-content {
+                text-align: left;
+                padding: 0px 10px;
+                height: auto;
+                background-color: #FFF;
+                line-height: 190%;
+            }
+
+            @media(max-width:800px) {
+                .product-content {
+                    padding: 0 2vw;
+                }
+            }
+
+            .img-banner-transfer-carro {
+                height: auto;
+                width: 150px;
+                vertical-align: bottom;
+            }
+
+            @media(max-width:800px) {
+                .img-banner-transfer-carro {
+                    height: auto !important;
+                    width: 35vw !important;
+                    display: block !important;
+                    margin-left: auto !important;
+                    margin-right: auto !important;
+                    margin-bottom: 2vw !important;
+                }
+            }
+
+            .img-banner-kat {
+                height: auto;
+                width: 87px;
+                margin: auto;
+            }
+
+            @media(max-width:800px) {
+                .img-banner-kat {
+                    height: auto !important;
+                    width: 20vw !important;
+                    max-width: 100%;
+                }
+            }
+
+            .cta-banner {
+                width: 45px;
+                height: 45px;
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            @media(max-width:800px) {
+                .cta-banner {
+                    width: auto !important;
+                    height: 9vw !important;
+                }
+            }
+
+            .cta-banner-card {
+                width: 45px;
+                height: 45px;
+            }
+
+            @media(max-width:800px) {
+                .cta-banner-card {
+                    width: 9vw !important;
+                    height: 9vw !important;
+                }
+            }
+
+            .texto-banner-transfer {
+                box-sizing: border-box;
+                text-align: center;
+            }
+
+            .bold-texto-banner-transfer {
+                font-size: 18px;
+                font-weight: 700;
+                margin-top: 0px;
+                margin-bottom: 2px;
+                color: white;
+                line-height: 120%;
+            }
+
+            @media(max-width:800px) {
+                .bold-texto-banner-transfer {
+                    font-size: 6.5vw !important;
+                    line-height: 150% !important;
+                    text-align: center !important;
+                }
+            }
+
+            .bold-texto-banner-kat {
+                font-size: 20px;
+                font-weight: 700;
+                margin-top: 0px;
+                margin-bottom: 2px;
+                color: #FFF;
+                line-height: 120%;
+            }
+
+            @media(max-width:800px) {
+                .bold-texto-banner-kat {
+                    font-size: 3.7vw !important;
+                }
+            }
+
+            .unbold-texto-banner-transfer {
+                font-size: 14px;
+                font-weight: 500;
+                margin-top: 0px;
+                margin-bottom: 0px;
+                color: white;
+                line-height: 120%;
+            }
+
+            @media(max-width:800px) {
+                .unbold-texto-banner-transfer {
+                    font-size: 4vw !important;
+                    text-align: center !important;
+                    margin-bottom: 2vw !important;
+                }
+            }
+
+            .unbold-texto-banner-kat {
+                font-size: 13px;
+                font-weight: 500;
+                margin-top: 0px;
+                margin-bottom: 0px;
+                color: #FFF;
+                line-height: 120%;
+            }
+
+            @media(max-width:800px) {
+                .unbold-texto-banner-kat {
+                    font-size: 2.8vw !important;
+                }
+            }
+
+            .toll {
+                color: #FFF;
+                font-weight: 900;
+                font-size: 17px;
+                margin-top: 0;
+                margin-bottom: 6px;
+            }
+
+            @media(max-width:800px) {
+                .toll {
+                    font-size: 3vw !important;
+                    margin-bottom: 1vw !important;
+                }
+            }
+
+            .telephone {
+                background-color: #FFF;
+                color: #333;
+                box-sizing: border-box;
+                padding: 5px;
+                font-size: 14px;
+                margin: 0;
+                border-radius: 7px;
+                width: 113px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            @media(max-width:800px) {
+                .telephone {
+                    font-size: 3.5vw !important;
+                    padding: 1vw !important;
+                    width: 22vw !important;
+                    margin-left: auto !important;
+                    margin-right: auto !important;
+                }
+            }
+
+            .dominio {
+                font-size: 16px;
+                color: #FFF;
+                margin-top: 20px;
+                margin-bottom: 0px;
+            }
+
+            .container-logo-nexus {
+                background-color: #F4F4F4;
+                width: 100%;
+            }
+
+            .background-nexus {
+                background-color: #F0A42B;
+            }
+
+            .tag-desk {
+                display: block;
+            }
+
+            @media(max-width:800px) {
+                .tag-desk {
+                    display: none !important;
+                }
+            }
+
+            .tag-mob {
+                display: none;
+            }
+
+            @media(max-width:800px) {
+                .tag-mob {
+                    display: block !important;
+                }
+            }
+
+            .container-car-width {
+                padding-left: 10px;
+                width: 30%;
+            }
+
+            @media(max-width:800px) {
+                .container-car-width {
+                    padding-left: 3vw !important;
+                    width: 25% !important;
+                }
+            }
+
+            .container-text-car-width {
+                width: 55%;
+            }
+
+            @media(max-width:800px) {
+                .container-plus-width {
+                    width: 10% !important;
+                }
+            }
+
+            .container-kat-width {
+                width: 20%;
+                text-align: center;
+            }
+
+            @media(max-width:800px) {
+                .container-kat-width {
+                    width: 26% !important;
+                    max-width: 26% !important;
+                }
+            }
+
+            .container-text-kat-width {
+                width: 50%;
+            }
+
+            @media(max-width:800px) {
+                .container-text-kat-width {
+                    width: 40% !important;
+                    max-width: 40% !important;
+                }
+            }
+
+            .container-toll-width {
+                width: 40% !important;
+                max-width: 40% !important;
+            }
+
+            @media(max-width:800px) {
+                .container-toll-width {
+                    width: 40% !important;
+                    max-width: 40% !important;
+                    min-width: 40% !important;
+                }
+            }
+
+            .img-redes {
+                width: 35px;
+                height: 35px;
+            }
+
+            .containerSekura {
+                width: 95%;
+                margin-left: auto;
+                margin-right: auto;
+                background-color: #FFFFFF;
+                border-radius: 20px;
+                overflow: hidden;
+                box-sizing: border-box;
+                padding: 25px 22px;
+            }
+
+            @media(max-width:800px) {
+                .containerSekura {
+                    padding: 25px 22px !important;
+                    text-align: center !important;
+                }
+            }
+
+            .titleSekura {
+                margin-top: 0;
+                margin-bottom: 0;
+                color: #F0A42B;
+                font-size: 20px;
+                line-height: 107.7%;
+                font-weight: 700;
+            }
+
+            @media(max-width:800px) {
+                .titleSekura {
+                    text-align: center !important;
+                }
+            }
+
+            .textSekura {
+                line-height: 107.7%;
+                font-size: 14px;
+                color: #646464;
+                font-weight: 500;
+                margin-bottom: 0;
+            }
+
+            @media(max-width:800px) {
+                .textSekura {
+                    text-align: left !important;
+                }
+            }
+
+            .padTextSekura {
+                padding-right: 10px;
+            }
+
+            .imgSekura {
+                width: 175px;
+            }
+
+            @media(max-width:800px) {
+                .imgSekura {
+                    width: 60% !important;
+                }
+            }
+
+            .container-banner-publicidad {
+                width: 95%;
+                margin: auto;
+            }
+
+            .img-banner-publicidad {
+                width: 100%;
+            }
+
+            /*Section TextBlock2*/
+
+            .tag-desk-table {
+                display: table;
+            }
+
+            @media(max-width:800px) {
+                .tag-desk-table {
+                    display: none !important;
+                }
+            }
+
+            .width-tollWA {
+                width: 50%;
+                max-width: 50%;
+                min-width: 50%;
+            }
+
+            .container-toll {
+                width: fit-content;
+                border-radius: 50px;
+                padding: 10px 60px 10px 60px;
+                margin: auto;
+            }
+
+            @media(max-width:800px) {
+                .container-toll {
+                    padding: 2vw 11vw !important;
+                }
+            }
+
+            .img-tollWA {
+                width: 25px;
+                height: 25px;
+                vertical-align: middle;
+            }
+
+            .text-tollWA {
+                color: white;
+                margin: 0;
+                padding-left: 5px;
+                font-size: 18px;
+            }
+
+            .container-wa {
+                width: fit-content;
+                border-radius: 50px;
+                padding: 10px 55px 10px 55px;
+                margin: auto;
+            }
+
+            @media(max-width:800px) {
+                .container-wa {
+                    padding: 2vw 10.7vw !important;
+                }
+            }
+
+            /*Section Productos*/
+
+            .containerSectionProductos {
+                background-color: #FFF;
+                width: 95%;
+                margin: auto;
+                border-radius: 15px;
+                padding: 25px 0;
+            }
+
+            .titleSectionProductos {
+                text-align: center;
+                width: 90%;
+                margin-top: 0;
+                margin-left: auto;
+                margin-right: auto;
+                font-size: 25px;
+            }
+
+            @media(max-width:800px) {
+                .titleSectionProductos {
+                    font-size: 5vw !important;
+                }
+            }
+
+            .bgImgProductos {
+                width: 100%;
+                background-position: center;
+                background-size: cover;
+                border-radius: 15px;
+                height: 140px;
+                padding-top: 104px;
+            }
+
+            @media(max-width:800px) {
+                .bgImgProductos {
+                    height: 38vw !important;
+                    padding-top: 29vw !important;
+                }
+            }
+
+            .botonBookNow {
+                display: block;
+                margin-left: auto;
+                margin-right: 8px;
+                width: fit-content;
+            }
+
+            .containerBotonBookNow {
+                background-color: #F0A42B;
+                width: 107px;
+                border-radius: 30px;
+                padding: 5px 10px;
+            }
+
+            @media(max-width:800px) {
+                .containerBotonBookNow {
+                    width: 27vw !important;
+                    padding: 1vw 3vw !important;
+                }
+            }
+
+            .botonCTA {
+                font-size: 12px;
+                color: white;
+                padding-right: 10px;
+                font-weight: 700;
+            }
+
+            @media(max-width:800px) {
+                .botonCTA {
+                    font-size: 3vw !important;
+                    padding-right: 2vw !important;
+                }
+            }
+
+            .title-section {
+                margin-top: 0;
+                margin-bottom: 0;
+                font-size: 25px;
+                text-align: center;
+                max-width: 95%;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .subtitle-section {
+                margin-top: 0;
+                font-size: 18px;
+                text-align: center;
+                max-width: 95%;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .subtitle-section-2 {
+                margin-top: 0;
+                margin-bottom: 0;
+                font-size: 20px;
+                text-align: center;
+                max-width: 95%;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .plusCTA {
+                width: 12px;
+                height: 12px;
+                display: block;
+            }
+
+            @media(max-width:800px) {
+                .plusCTA {
+                    width: 3vw !important;
+                    height: 3vw !important;
+                }
+            }
+
+            .container90 {
+                width: 90%;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .img-logo-nexus {
+                max-width: 100%;
+            }
+                        /*Section Productos*/
+
+                        .containerSectionProductos {
+                background-color: #FFF;
+                width: 95%;
+                margin: auto;
+                border-radius: 15px;
+                padding: 25px 0;
+            }
+
+            .titleSectionProductos {
+                text-align: center;
+                width: 90%;
+                margin-top: 0;
+                margin-left: auto;
+                margin-right: auto;
+                font-size: 25px;
+            }
+
+            @media(max-width:800px) {
+                .titleSectionProductos {
+                    font-size: 5vw !important;
+                }
+            }
+
+            .bgImgProductos {
+                width: 100%;
+                background-position: center;
+                background-size: cover;
+                border-radius: 15px;
+                height: 140px;
+                padding-top: 104px;
+            }
+
+            @media(max-width:800px) {
+                .bgImgProductos {
+                    height: 38vw !important;
+                    padding-top: 29vw !important;
+                }
+            }
+
+            .botonBookNow {
+                display: block;
+                margin-left: auto;
+                margin-right: 8px;
+                width: fit-content;
+            }
+
+            .containerBotonBookNow {
+                background-color: #FF621D;
+                width: 107px;
+                border-radius: 30px;
+                padding: 5px 10px;
+            }
+
+            @media(max-width:800px) {
+                .containerBotonBookNow {
+                    width: 27vw !important;
+                    padding: 1vw 3vw !important;
+                }
+            }
+
+            .botonCTA {
+                font-size: 12px;
+                color: white;
+                padding-right: 10px;
+                font-weight: 700;
+            }
+
+            @media(max-width:800px) {
+                .botonCTA {
+                    font-size: 3vw !important;
+                    padding-right: 2vw !important;
+                }
+            }
+
+            .title-section {
+                margin-top: 0;
+                margin-bottom: 0;
+                font-size: 25px;
+                text-align: center;
+                max-width: 95%;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .subtitle-section {
+                margin-top: 0;
+                font-size: 18px;
+                text-align: center;
+                max-width: 95%;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .subtitle-section-2 {
+                margin-top: 0;
+                margin-bottom: 0;
+                font-size: 20px;
+                text-align: center;
+                max-width: 95%;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .plusCTA {
+                width: 12px;
+                height: 12px;
+                display: block;
+            }
+
+            @media(max-width:800px) {
+                .plusCTA {
+                    width: 3vw !important;
+                    height: 3vw !important;
+                }
+            }
+
+            .container90 {
+                width: 90%;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .img-logo-nexus {
+                max-width: 100%;
+            }
+        
+            .botonConfirmed{
+            width: 40%; 
+            margin-left: auto; 
+            margin-right: auto; 
+            display: block;
+        }
+
+        .textBotonConfirmed{
+            color: white; 
+            padding: 10px 0; 
+            border-radius: 69px; 
+            font-size: 20px; 
+            font-weight: 600; 
+            line-height: 110%; 
+            text-align: center; 
+            background-position: center; 
+            background-size: cover; 
+            background-image: url('https://www.nexustours.com/images/upload//Email-content/Background_orange_midstay.png');
+        }
+        @media(max-width:800px){
+            .textBotonConfirmed{
+                font-size: 4vw !important; 
+            }
+        }
+        </style>
+    </head>
+
+    <body>
+        <div class="container-email">
+            <div id="email" class="body-email">
+                <table id="LogoHeader" role="presentation" border="0" cellspacing="0" width="100%">
+                    <tr>
+                        <td>
+                            <a class="banner-header" alt="banner-header" href="{{base_url}}?utm_source={{utm_source}}&utm_medium={{utm_medium}}&utm_campaign={{utm_campaign}}&contact_id={{contact.id}}" target="_blank" width="100%"></a>
+                        </td>
+                    </tr>
+                </table>
+                <!-- Main Card dinámico -->
+                <table id="TextBlock1" class="margin-bottom-22" role="presentation" border="0" cellspacing="0" width="100%">
+                    <tr>
+                        <td>
+                            <div class="card-email margin-bottom-22">
+                                {{{body_content}}}
+                            </div>
+                            <a class="botonConfirmed"
+                               href="{{base_url}}?utm_source={{utm_source}}&utm_medium={{utm_medium}}&utm_campaign={{utm_campaign}}&contact_id={{contact.id}}"
+                               target="_blank">
+                                <div class="textBotonConfirmed">Click here</div>
+                            </a>
+                        </td>
+                    </tr>
+                </table>
+                <table id="RedesSociales" class="background-redes-table" role="presentation" border="0" cellspacing="0" width="100%">
+                    <tr>
+                        <td>
+                            <div class="container-text">
+                                <a href="{{base_url}}?utm_source={{utm_source}}&utm_medium={{utm_medium}}&utm_campaign={{utm_campaign}}&contact_id={{contact.id}}" target="_blank">
+                                    <h3 class="dominio">
+                                        princess.nexustours.com
+                                    </h3>
+                                </a>
+                            </div>
+                            <div class="container-redes">
+                                <table class="table-redes" role="presentation" border="0" width="100%">
+                                    <tr>
+                                        <td>
+                                            <a href="https://wa.me/529981472600?text=Got%20it.%20Let's%20connect%20you%20to%20a%20NexusTours%20expert." target="_blank">
+                                                <img src="https://www.nexustours.com/images/upload//Email-content/waEmailYellow.png">
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </body>
+
+</html>
