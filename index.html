@@ -17,13 +17,15 @@
     h1 { text-align: center; color: #333; margin-bottom: 1.5rem; }
     form { background: #fff; padding: 1.5rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
     label { display: block; margin-bottom: 1rem; font-weight: 500; color: #555; }
-    select, input, #editor, .sources-list {
+    .checkbox-list label { display: block; margin-bottom: .5rem; }
+    .checkbox-list input { margin-right: .5rem; }
+    input, #editor, .sources-list {
       width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 6px; margin-top: 0.5rem;
     }
-    select[multiple] { height: 8rem; }
+    select[multiple] { display: none; }
     .sources-list { background: #fafafa; max-height: 6rem; overflow-y: auto; }
     button {
-      background: #FF621D; color: #fff; border: none; padding: 0.75rem 1.5rem; 
+      background: #FF621D; color: #fff; border: none; padding: 0.75rem 1.5rem;
       border-radius: 6px; cursor: pointer; font-weight: 600; margin-right: .5rem;
     }
     button:hover { background: #e55d1c; }
@@ -47,20 +49,19 @@
   <div class="container">
     <h1>Generador de E-mail Multimarcas</h1>
     <form id="config-form" onsubmit="return false;">
-      <label>Seleccionar plantillas (Ctrl+click múltiple):
-        <select id="template_selector" multiple>
-          <option value="all">Todas</option>
-          <option value="mystique_campaña_eng.html">Mystique</option>
-          <option value="Planet_campaña_eng.html">Planet</option>
-          <option value="Royalton_campaña_eng.html">Royalton</option>
-          <option value="Nexus_campaña_eng.html">Nexus</option>
-          <option value="VistaSol_campaña_eng.html">VistaSol</option>
-          <option value="latam_campaña_eng.html">LatAm</option>
-          <option value="hype_campaña_eng.html">Hype</option>
-          <option value="Prime_campaña_eng.html">Prime</option>
-          <option value="princess_campaña_eng.html">Princess</option>
-        </select>
-      </label>
+      <label>Seleccionar plantillas:</label>
+      <div class="checkbox-list" id="template_selector">
+        <label><input type="checkbox" value="all" />Todas</label>
+        <label><input type="checkbox" value="mystique_campaña_eng.html" />Mystique</label>
+        <label><input type="checkbox" value="Planet_campaña_eng.html" />Planet</label>
+        <label><input type="checkbox" value="Royalton_campaña_eng.html" />Royalton</label>
+        <label><input type="checkbox" value="Nexus_campaña_eng.html" />Nexus</label>
+        <label><input type="checkbox" value="VistaSol_campaña_eng.html" />VistaSol</label>
+        <label><input type="checkbox" value="latam_campaña_eng.html" />LatAm</label>
+        <label><input type="checkbox" value="hype_campaña_eng.html" />Hype</label>
+        <label><input type="checkbox" value="Prime_campaña_eng.html" />Prime</label>
+        <label><input type="checkbox" value="princess_campaña_eng.html" />Princess</label>
+      </div>
 
       <label>UTM Source (por marca, solo lectura):</label>
       <div class="sources-list" id="sources_list"></div>
@@ -95,52 +96,46 @@
     });
 
     const templateConfig = {
-      "mystique_campaña_eng.html": { base_url: "https://mystique.nexustours.com/services", utm_source: "mystique", utm_medium: "mail" },
-      "Planet_campaña_eng.html":   { base_url: "https://planet.nexustours.com", utm_source: "PH", utm_medium: "mail" },
-      "Royalton_campaña_eng.html": { base_url: "https://royalton.nexustours.com/services", utm_source: "royalton", utm_medium: "mail" },
-      "Nexus_campaña_eng.html":    { base_url: "https://www.nexustours.com/discounts", utm_source: "nexusB2C", utm_medium: "mail" },
-      "VistaSol_campaña_eng.html": { base_url: "https://vistasol.nexustours.com", utm_source: "vistasol", utm_medium: "mail" },
-      "latam_campaña_eng.html":    { base_url: "https://latamtravel.nexustours.com", utm_source: "latam", utm_medium: "mail" },
-      "hype_campaña_eng.html":     { base_url: "https://www.cancuntransfersandtours.com", utm_source: "HypeTravel", utm_medium: "mail" },
-      "Prime_campaña_eng.html":    { base_url: "https://primetravelersclub.nexustours.com", utm_source: "prime", utm_medium: "mail" },
-      "princess_campaña_eng.html": { base_url: "https://princess.nexustours.com", utm_source: "princess", utm_medium: "mail" }
+      "mystique_campaña_eng.html": { base_url:"https://mystique.nexustours.com/services", utm_source:"mystique", utm_medium:"mail" },
+      "Planet_campaña_eng.html":   { base_url:"https://planet.nexustours.com", utm_source:"PH", utm_medium:"mail" },
+      "Royalton_campaña_eng.html": { base_url:"https://royalton.nexustours.com/services", utm_source:"royalton", utm_medium:"mail" },
+      "Nexus_campaña_eng.html":    { base_url:"https://www.nexustours.com/discounts", utm_source:"nexusB2C", utm_medium:"mail" },
+      "VistaSol_campaña_eng.html": { base_url:"https://vistasol.nexustours.com", utm_source:"vistasol", utm_medium:"mail" },
+      "latam_campaña_eng.html":    { base_url:"https://latamtravel.nexustours.com", utm_source:"latam", utm_medium:"mail" },
+      "hype_campaña_eng.html":     { base_url:"https://www.cancuntransfersandtours.com", utm_source:"HypeTravel", utm_medium:"mail" },
+      "Prime_campaña_eng.html":    { base_url:"https://primetravelersclub.nexustours.com", utm_source:"prime", utm_medium:"mail" },
+      "princess_campaña_eng.html": { base_url:"https://princess.nexustours.com", utm_source:"princess", utm_medium:"mail" }
     };
 
-    const selSelect = document.getElementById('template_selector');
+    const checkboxes = Array.from(document.querySelectorAll('input[type="checkbox"]'));
     const sourcesList = document.getElementById('sources_list');
     const utmMediumInput = document.getElementById('utm_medium');
     const utmCampaignInput = document.getElementById('utm_campaign');
     let lastRenderedMap = {};
 
     function onTemplateChange() {
-      const selected = Array.from(selSelect.selectedOptions).map(o => o.value);
-      if (selected.includes('all')) {
-        populateList(Object.keys(templateConfig));
-      } else {
-        populateList(selected);
-      }
+      let selected = checkboxes.filter(cb => cb.checked).map(cb => cb.value);
+      if (selected.includes('all')) selected = Object.keys(templateConfig);
+      populateList(selected);
     }
 
     function populateList(list) {
       sourcesList.innerHTML = '';
       if (!list.length) { utmMediumInput.value = ''; return; }
-      // medium from first
-      const first = list[0] === 'all' ? Object.keys(templateConfig)[0] : list[0];
+      const first = list[0];
       utmMediumInput.value = templateConfig[first].utm_medium;
-      // show each source
       list.forEach(key => {
-        if (key === 'all') return;
         const div = document.createElement('div');
         div.textContent = `${key.replace('_campaña_eng.html','')}: ${templateConfig[key].utm_source}`;
         sourcesList.appendChild(div);
       });
     }
 
-    selSelect.addEventListener('change', onTemplateChange);
+    checkboxes.forEach(cb => cb.addEventListener('change', onTemplateChange));
     onTemplateChange();
 
     async function generatePreview() {
-      let selected = Array.from(selSelect.selectedOptions).map(o => o.value);
+      let selected = checkboxes.filter(cb => cb.checked).map(cb => cb.value);
       if (selected.includes('all')) selected = Object.keys(templateConfig);
       if (!selected.length) return alert('Selecciona al menos una plantilla.');
       const previews = document.getElementById('previews');
@@ -158,8 +153,9 @@
           banner_image_name: document.getElementById('banner_image_name').value.trim()
         };
 
-        const c = document.createElement('div'); c.innerHTML = rawHtml;
-        c.querySelectorAll('a').forEach(a => {
+        const container = document.createElement('div');
+        container.innerHTML = rawHtml;
+        container.querySelectorAll('a').forEach(a => {
           let href = a.getAttribute('href') || a.textContent.trim();
           if (!/^https?:\/\//i.test(href)) href = 'https://' + href;
           href = href.toLowerCase();
@@ -171,7 +167,7 @@
             '&contact_id={{contact.id}}';
           a.setAttribute('href', href);
         });
-        data.body_content = c.innerHTML;
+        data.body_content = container.innerHTML;
 
         const tplText = await fetch(tplFile).then(r => r.text());
         const rendered = Mustache.render(tplText, data);
@@ -196,7 +192,7 @@
     }
 
     function downloadHTML() {
-      let selected = Array.from(selSelect.selectedOptions).map(o => o.value);
+      let selected = checkboxes.filter(cb => cb.checked).map(cb => cb.value);
       if (selected.includes('all')) selected = Object.keys(templateConfig);
       for (const tplFile of selected) {
         const html = lastRenderedMap[tplFile];
